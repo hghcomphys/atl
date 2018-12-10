@@ -46,9 +46,16 @@ class MolecularFrame(object):
         
           
     def __str__(self):
+        """
+        This function returns a string includes general attributes of the molecular frame
+        such as number of atoms, molecules, types, etc.
+
+        :return: string
+        """
         out='Molecular Frame\n---------------\n'
         for k in self._molframe.keys():
-            out = out + '%d '%len(self._molframe[k]) + k + '\n'
+            out += '%d '%len(self._molframe[k]) + k + '\n'
+        out += '%d Molecules'%self.n_molecules
         return out
     
         
