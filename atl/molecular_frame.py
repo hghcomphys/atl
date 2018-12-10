@@ -50,7 +50,6 @@ class MolecularFrame(object):
         This function returns a string includes general attributes of the molecular frame
         such as number of atoms, molecules, types, etc.
 
-        :return: string
         """
         out='Molecular Frame\n---------------\n'
         for k in self._molframe.keys():
@@ -60,6 +59,10 @@ class MolecularFrame(object):
     
         
     def __clean_molframe(self):
+        """
+        This function cleans all data from the molecular frame.
+        
+        """
         for k in self._attributes.split():
             self._molframe[k] = []
 
