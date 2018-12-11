@@ -300,14 +300,16 @@ class MolecularFrame(object):
 
     def select_molecules_randomly(self, frac=1.0, nmol=None, seed=None):
         import numpy
+        from random import shuffle
         if not seed is None:
             numpy.random.seed(seed)
         if not nmol is None:
-            nsample = nmol
+            nsample = self.n_molecules - nmol
         else:
             nsample = int((1.-frac) * self.n_molecules)
         mid_list = self.mid
-        removed_mid = list(numpy.random.choice(mid_list, nsample))
+        shuffle(mid_list)
+        removed_mid = mid_list[:nsample]
 
         new_mf = MolecularFrame(attributes=self._attributes, molframe=self._molframe)
         new_mf.remove_molecules(removed_mid)
