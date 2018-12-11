@@ -61,7 +61,7 @@ class MolecularFrame(object):
     def __clean_molframe(self):
         """
         This function cleans all data from the molecular frame.
-        
+
         """
         for k in self._attributes.split():
             self._molframe[k] = []
@@ -298,11 +298,14 @@ class MolecularFrame(object):
         return new_mf
 
 
-    def select_molecules_randomly(self, frac=1.0, seed=None):
+    def select_molecules_randomly(self, frac=1.0, nmol=None, seed=None):
         import numpy
         if not seed is None:
             numpy.random.seed(seed)
-        nsample = int((1.-frac) * self.n_molecules)
+        if not nmol is None:
+            nsample = nmol
+        else:
+            nsample = int((1.-frac) * self.n_molecules)
         mid_list = self.mid
         removed_mid = list(numpy.random.choice(mid_list, nsample))
 
