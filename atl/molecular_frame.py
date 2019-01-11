@@ -42,7 +42,7 @@ class MolecularFrame(object):
         
         import copy
         self._attributes = attributes    
-        self._molframe = copy.deepcopy( molframe )
+        self._molframe = copy.deepcopy(molframe)
         
           
     def __str__(self):
@@ -146,7 +146,7 @@ class MolecularFrame(object):
 
     @property
     def improper_types(self):
-        return self._molframe['Types'][3]
+        return self._molframe['Types'][4]
 
 
     # ====================================================================================================
@@ -415,16 +415,17 @@ class MolecularFrame(object):
         for attribute in self._attributes.split():
             
             if attribute == 'Boxes':
-                molframe[attribute] = self._molframe[attribute] # taking boxsize from first object
+                # getting box size from the first object
+                molframe[attribute] = self._molframe[attribute]
 
             elif attribute == 'Types':
-                molframe[attribute] = [ x+y for x,y in zip(self._molframe[attribute], other._molframe[attribute]) ]
+                 molframe[attribute] = [x+y for x,y in zip(self._molframe[attribute], other._molframe[attribute])]
 
             else:
                 tmp_list = [self._molframe[attribute], other._molframe[attribute]]
                 molframe[attribute] = reduce(lambda x,y: x+y, tmp_list)
             
-        return MolecularFrame(attributes=self._attributes,molframe=molframe)
+        return MolecularFrame(attributes=self._attributes, molframe=molframe)
 
 
     # ====================================================================================================
