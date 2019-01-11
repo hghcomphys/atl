@@ -150,6 +150,41 @@ class MolecularFrame(object):
 
 
     # ====================================================================================================
+    # unique list of types (atom, bond, angle, dihedral, and improper)
+    # ====================================================================================================
+
+    def _find_unique_list(self, section, index):
+        unique_list = []
+        for sec in self._molframe[section]:
+            sec_type = sec[index]
+            if sec_type not in unique_list:
+                unique_list.append(sec_type)
+        if not unique_list:
+            return [0] # to avoid max empty argument in __add__
+        return unique_list
+
+    @property
+    def atom_types_list(self):
+        return  self._find_unique_list('Atoms', 2)
+
+    @property
+    def bond_types_list(self):
+        return  self._find_unique_list('Bonds', 1)
+
+    @property
+    def angle_types_list(self):
+        return  self._find_unique_list('Angles', 1)
+
+    @property
+    def dihedral_types_list(self):
+        return  self._find_unique_list('Dihedrals', 1)
+
+    @property
+    def improper_types_list(self):
+        return  self._find_unique_list('Impropers', 1)
+
+
+    # ====================================================================================================
     # Removing atoms and molecuels
     # ====================================================================================================
 
@@ -419,7 +454,26 @@ class MolecularFrame(object):
                 molframe[attribute] = self._molframe[attribute]
 
             elif attribute == 'Types':
-                 molframe[attribute] = [x+y for x,y in zip(self._molframe[attribute], other._molframe[attribute])]
+                # # simply adding number of types
+                # molframe[attribute] = [x+y for x,y in zip(self._molframe[attribute], other._molframe[attribute])]
+                # max from unique list of types is set for the merged molecule
+                molframe[attribute] = [0, 0, 0, 0, 0]
+                molframe[attribute][0] = max(list(set(self.atom_types_list + other.atom_types_list)))
+                molframe[attribute][1] = max(list(set(self.bond_types_list + other.bond_types_list)))
+                molframe[attribute][2] = max(list(set(self.angle_types_list + other.angle_types_list)))
+                molframe[attribute][3] = max(list(set(self.dihedral_types_list + other.dihedral_types_list)))
+                molframe[attribute][4] = max(list(set(self.improper_types_list + other.improper_types_list)))
+
+            elif attribute == 'Masses':
+                atom_types = list(set(self.atom_types_list + other.atom_types_list))
+                molframe[attribute] = []
+                inserted_mass = []
+                for at in atom_types:
+                    for sec in self._molframe[attribute]:
+                        if at == sec[0] and (at not in inserted_mass):
+                            inserted_mass.append(at)
+                            molframe[attribute].append(sec)
+                            break
 
             else:
                 tmp_list = [self._molframe[attribute], other._molframe[attribute]]
