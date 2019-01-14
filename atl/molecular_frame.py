@@ -465,15 +465,14 @@ class MolecularFrame(object):
                 molframe[attribute][4] = max(list(set(self.improper_types_list + other.improper_types_list)))
 
             elif attribute == 'Masses':
-                atom_types = list(set(self.atom_types_list + other.atom_types_list))
+                types_list = [self._molframe[attribute], other._molframe[attribute]]
+                appended_list = reduce(lambda x,y: x+y, types_list) # simply appended all types & masses
                 molframe[attribute] = []
                 inserted_mass = []
-                for at in atom_types:
-                    for sec in self._molframe[attribute]:
-                        if at == sec[0] and (at not in inserted_mass):
-                            inserted_mass.append(at)
-                            molframe[attribute].append(sec)
-                            break
+                for at in appended_list:
+                        if at[0] not in inserted_mass:
+                            inserted_mass.append(at[0])
+                            molframe[attribute].append(at)
 
             else:
                 tmp_list = [self._molframe[attribute], other._molframe[attribute]]
