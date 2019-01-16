@@ -15,24 +15,22 @@ def read_data(filename='data.dat', start_line=0, end_line=10000000):
     prv = None
     while nline < end_line:
 
-        # ----------------------------
         line = fp.readline()
         nline += 1
         if not line:
             break
-            # ----------------------------
+
         if nline < start_line:
             continue
-        # ----------------------------
+
         line = line.rstrip("/n").split()
         data.append([float(_) for _ in line])
-        # ----------------------------
+
         lng = len(line)
         if prv is not None and prv != lng:
             break
-        # ----------------------------
+
         prv = lng
-        # ----------------------------
 
     fp.close()
     return data

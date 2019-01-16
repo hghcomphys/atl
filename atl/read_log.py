@@ -29,18 +29,17 @@ def read_log(filename='log.lammps', run=1,
         if not line:
             break
 
-            # ----------------------------
         if not criteria_1 in line:
             continue
         else:
             nr += 1
             if nr < run:
                 continue
-        # ----------------------------
+
         line = fp.readline()
         nline += 1
         tags = line.rstrip("/n").split()
-        # ----------------------------
+
         line = fp.readline()
         nline += 1
         prv = None
@@ -55,16 +54,15 @@ def read_log(filename='log.lammps', run=1,
             line = fp.readline()
             nline += 1
             prv = lng
-        # ----------------------------
+
         if nr == run:
             break
-        # -----------------------------
-
     fp.close()
 
     return data, tags
 
 # ========================================================================================
+
 
 def read_log_pandas(filename='log.lammps',
                    run=1,
