@@ -1,3 +1,7 @@
+"""
+writing data into a file
+"""
+
 
 def write_xyz(atom_txyz=[], filename='atl-dump.xyz'):
     """

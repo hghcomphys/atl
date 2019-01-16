@@ -1,3 +1,8 @@
+"""
+Calculating the dipole moment of a given data frame.
+"""
+from . import read_xyz_pandas
+
 
 def total_dipole(filename='water.xyz', type_charge_dict={'O': -0.834, 'H': 0.417}, frame_range=[-1,1,10]):
     """
@@ -10,9 +15,6 @@ def total_dipole(filename='water.xyz', type_charge_dict={'O': -0.834, 'H': 0.417
         water={'O':-0.834,'H':0.417}
         P=total_dipole('../data/dump.xyz', type_charge_dict=water,frames=[1,-1,5]) # -1 indicates the last frame
     """
-
-    from atl import read_xyz_pandas
-
     if frame_range[1]<1:
         frame_range[1]=1000000
 
@@ -28,5 +30,4 @@ def total_dipole(filename='water.xyz', type_charge_dict={'O': -0.834, 'H': 0.417
             totP += (atoms[atoms['t'] == k][['x', 'y', 'z']] * type_charge_dict[k]).sum()
 
         dipole.append(list(totP))
-
     return dipole

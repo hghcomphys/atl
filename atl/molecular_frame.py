@@ -1,3 +1,11 @@
+"""
+Manipulating molecular frame
+"""
+import copy
+import numpy
+from random import shuffle
+import atl.io as io  # !!!
+
 
 class MolecularFrame(object):
     """
@@ -10,11 +18,6 @@ class MolecularFrame(object):
         print  water
         water.shift_atoms_id(1000)
         water.write_lmp('out.lmp')
-
-
-    Not implemented yet:
-    *** comments
-    *** tilted unit cell
     """
     
     # atoms, angles, bonds, dihedrals
@@ -34,17 +37,16 @@ class MolecularFrame(object):
     # Angles:    [anid,antype,aid,aid,aid]
     # Dihedrals: [did,dtype,aid,aid,aid,aid]
     # Impropers: [did,dtype,aid,aid,aid,aid]
-    
 
     # ====================================================================================================
 
     def __init__(self, attributes='Box Masses Atoms Bonds Angles Dihedrals Impropers Types', molframe={}):
-        
-        import copy
+        """
+        Molecular frame class constructor
+        """
         self._attributes = attributes    
         self._molframe = copy.deepcopy(molframe)
-        
-          
+
     def __str__(self):
         """
         This function returns a string includes general attributes of the molecular frame
@@ -56,8 +58,7 @@ class MolecularFrame(object):
             out += '%d '%len(self._molframe[k]) + k + '\n'
         out += '%d Molecules'%self.n_molecules
         return out
-    
-        
+
     def __clean_molframe(self):
         """
         This function cleans all data from the molecular frame.
@@ -86,7 +87,9 @@ class MolecularFrame(object):
     
     @property
     def n_impropers(self):     
-        return len(self._molframe['Impropers']) 
+        return len(self._molframe['Impropers'])
+
+    # ----- boxes -----
     
     @property
     def lx(self):     
@@ -127,6 +130,8 @@ class MolecularFrame(object):
     @property
     def box(self):     
         return self.lx, self.ly, self.lz
+
+    # ----- types -----
     
     @property
     def atom_types(self):     
@@ -148,7 +153,6 @@ class MolecularFrame(object):
     def improper_types(self):
         return self._molframe['Types'][4]
 
-
     # ====================================================================================================
     # unique list of types (atom, bond, angle, dihedral, and improper)
     # ====================================================================================================
@@ -160,7 +164,7 @@ class MolecularFrame(object):
             if sec_type not in unique_list:
                 unique_list.append(sec_type)
         if not unique_list:
-            return [0] # to avoid max empty argument in __add__
+            return [0] # to avoid max empty argument in __add__ fucntion
         return unique_list
 
     @property
@@ -183,7 +187,6 @@ class MolecularFrame(object):
     def improper_types_list(self):
         return  self._find_unique_list('Impropers', 1)
 
-
     # ====================================================================================================
     # Removing atoms and molecuels
     # ====================================================================================================
@@ -197,7 +200,6 @@ class MolecularFrame(object):
         for sec in removed_sec:
             self._molframe[section].remove(sec)
 
-
     def remove_atoms(self, aid_list=[]):
         for aid in aid_list:
             self._remove_aid(aid, 'Atoms', index=[0])
@@ -206,15 +208,13 @@ class MolecularFrame(object):
             self._remove_aid(aid, 'Dihedrals', index=[2, 3, 4, 5])
             self._remove_aid(aid, 'Impropers', index=[2, 3, 4, 5])
 
-
     def remove_molecules(self, mid_list=[]):
         for mid in mid_list:
             molecule = self._find_molecule(mid)
             self.remove_atoms(molecule)
-        # has to be used cautiously at top-layer functions
+        # has to be used cautiously at the top-layer functions
         self.reset_aid()
         self.reset_mid()
-
 
     # ====================================================================================================
     # Resetting aid & mid
@@ -230,7 +230,6 @@ class MolecularFrame(object):
                         self._molframe[section][j][i] = aid_new[k]
                         break
 
-
     def reset_aid(self):
         aid_old = [at[0] for at in self._molframe['Atoms']]
         aid_new = [i+1 for i in range(self.n_atoms)]
@@ -240,8 +239,6 @@ class MolecularFrame(object):
         self._replace_aid(aid_old, aid_new, 'Dihedrals', index=[2, 3, 4, 5])
         self._replace_aid(aid_old, aid_new, 'Impropers', index=[2, 3, 4, 5])
 
-
-
     def reset_mid(self):
         mid_list = self.mid
         for i in range(self.n_atoms):
@@ -249,7 +246,6 @@ class MolecularFrame(object):
                 if self._molframe['Atoms'][i][1] == mid_list[j]:
                     self._molframe['Atoms'][i][1] = j + 1
                     break
-
 
     # ====================================================================================================
     # Molecular properties
@@ -276,7 +272,6 @@ class MolecularFrame(object):
     def n_molecules(self):
         return len(self.mid)
 
-
     # ====================================================================================================
     # find functions
     # ====================================================================================================
@@ -291,7 +286,6 @@ class MolecularFrame(object):
         # assert (atom!=None), "No atom was found with specified aid!"
         return atom
 
-
     def _find_molecule(self, mid):
         # assert (mid != None), "Specify molecule id!"
         molecule = []
@@ -301,14 +295,12 @@ class MolecularFrame(object):
         # assert (molecule!=[]), "No molecule was found with specified mid!"
         return molecule
 
-
     def _find_aids_for_mid(self):
         mid_list = self.mid
         molecule_list = {}
         for mid in mid_list:
             molecule_list['mid_%d' % mid]=self._find_molecule(mid)
         return molecule_list
-
 
     # ====================================================================================================
     # select molecules
@@ -332,10 +324,8 @@ class MolecularFrame(object):
         new_mf.remove_molecules(removed_mid)
         return new_mf
 
-
     def select_molecules_randomly(self, frac=1.0, nmol=None, seed=None):
-        import numpy
-        from random import shuffle
+
         if not seed is None:
             numpy.random.seed(seed)
         if not nmol is None:
@@ -349,7 +339,6 @@ class MolecularFrame(object):
         new_mf = MolecularFrame(attributes=self._attributes, molframe=self._molframe)
         new_mf.remove_molecules(removed_mid)
         return new_mf
-
 
     # ====================================================================================================
     # swap molecules
@@ -387,7 +376,6 @@ class MolecularFrame(object):
     #                 self._molframe
 
 
-
     # ====================================================================================================
     # read/write .xyz format
     # ====================================================================================================
@@ -395,20 +383,16 @@ class MolecularFrame(object):
     def read_xyz(self, filename, frame=-1):
         
         self.__clean_molframe()
-        
-        import atl.io as io #!!!
-        data = io.read_xyz(filename, frame)  
-        
-        aid=1; mid=1
-        for d in data:
 
+        data = io.read_xyz(filename, frame)
+        aid=1
+        mid=1
+        for d in data:
             #      [aid, mid, atype, charge, xpos, ypos, zpos, imx, imy, imz, type]
             atom = [aid, mid, 0    , 0.0   , d[1], d[2], d[3], 0  , 0  , 0  , d[0] ]
-
             self._molframe['Atoms'].append( atom )
             aid += 1
             mid += 1
-   
 
     def write_xyz(self, filename):             
         with open(filename, 'w') as fo:
@@ -417,7 +401,6 @@ class MolecularFrame(object):
             fo.write('%d\nGenerated by ATL\n'%self.n_atoms)
             for at in self._molframe['Atoms']:
                 fo.write('%s %f %f %f\n'%(at[10],at[4],at[5],at[6]))
-
 
     # ====================================================================================================
     # read/write lammps format
@@ -429,12 +412,10 @@ class MolecularFrame(object):
         data=read_lammps_input(filename, self._attributes)
         for k in data.keys():
             self._molframe[k] = data[k]
-    
-    
+
     def write_lmp(self, filename):
         from lammps_input import write_lammps_input
         write_lammps_input(filename, self._molframe)
-
 
     # ====================================================================================================
     # Merging two molecules
@@ -480,7 +461,6 @@ class MolecularFrame(object):
             
         return MolecularFrame(attributes=self._attributes, molframe=molframe)
 
-
     # ====================================================================================================
     # Shifting ids
     # ====================================================================================================
@@ -489,61 +469,48 @@ class MolecularFrame(object):
         for mf in self._molframe[attribute]:
             for i in range(columns[0], columns[1]):
                 mf[i] += shift_id
-                
-   
+
     def shift_atoms_id(self, shift_id=0):        
         self.__shift_id('Atoms',     [0,1], shift_id)
         self.__shift_id('Bonds',     [2,4], shift_id)
         self.__shift_id('Angles',    [2,5], shift_id)
         self.__shift_id('Dihedrals', [2,6], shift_id)
         self.__shift_id('Impropers', [2,6], shift_id)
-                
-    
+
     def shift_bonds_id(self, shift_id=0):
         self.__shift_id('Bonds', [0,1], shift_id)
-    
-    
+
     def shift_angles_id(self, shift_id=0):
         self.__shift_id('Angles', [0,1], shift_id)
-            
-    
+
     def shift_dihedrals_id(self, shift_id=0):
         self.__shift_id('Dihedrals', [0,1], shift_id)
-    
 
     def shift_impropers_id(self, shift_id=0):
         self.__shift_id('Impropers', [0,1], shift_id)
-        
-        
+
     def shift_mols_id(self, shift_id=0):
         self.__shift_id('Atoms', [1,2], shift_id)
-    
-           
+
     def shift_atom_types(self, shift_id=0):
         self.__shift_id('Atoms',  [2,3], shift_id)
         self.__shift_id('Masses', [0,1], shift_id)
     
-    
     def shift_bond_types(self, shift_id=0):
         self.__shift_id('Bonds', [1,2], shift_id)
-    
     
     def shift_angle_types(self, shift_id=0):
         self.__shift_id('Angles', [1,2], shift_id)
     
-    
     def shift_dihedral_types(self, shift_id=0):
         self.__shift_id('Dihedrals', [1,2], shift_id)
-    
     
     def shift_improper_types(self, shift_id=0):
         self.__shift_id('Impropers', [1,2], shift_id)
 
-
     # ====================================================================================================
     # Setting properties
     # ====================================================================================================
-
 
     # ====================================================================================================
     # Moving Atoms
@@ -560,14 +527,12 @@ class MolecularFrame(object):
                 for j in range(2):
                     self._molframe['Box'][i][j] += move[i]
 
-
     @property
     def total_mass(self):
         mass = 0
         for at in self._molframe['Atoms']:
             mass += self._molframe['Masses'][at[2]][1]
         return mass
-
 
     @property
     def ceter_of_mass(self):
@@ -580,11 +545,9 @@ class MolecularFrame(object):
             rcm[i] /= self.total_mass
         return rcm
 
-
     def recenter(self, center=[0.,0.,0.], box=True):
         rcm = self.ceter_of_mass
         self.move_atoms(move=[-r+c for r,c in zip(rcm,center)], box=box)
-
 
 
     # ====================================================================================================
@@ -614,7 +577,7 @@ class MolecularFrame(object):
             if self._molframe['Atoms'][n][2] != O_type: continue;  # only water oxygen
 
             # Atoms
-            mid+=1
+            mid += 1
             for i in range(3):
                 self._molframe['Atoms'][n+i][1] = mid
 

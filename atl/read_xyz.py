@@ -1,3 +1,8 @@
+"""
+Reading lammps data frame into an array or pandas data format
+"""
+import pandas
+
 
 def read_xyz(filename='dump.xyz', frame=-1):
     """
@@ -56,7 +61,5 @@ def read_xyz_pandas(filename='dump.xyz', frame=-1):
     """
 
     atoms = read_xyz(filename, frame)
-
-    import pandas
     return pandas.DataFrame(atoms, columns=['t', 'x', 'y', 'z'])
 

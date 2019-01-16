@@ -1,3 +1,8 @@
+"""
+Reading lammps log file into an array or pandas data format
+"""
+import pandas
+
 
 def read_log(filename='log.lammps', run=1,
             criteria_1='Per MPI rank memory allocation',
@@ -59,9 +64,7 @@ def read_log(filename='log.lammps', run=1,
 
     return data, tags
 
-
 # ========================================================================================
-
 
 def read_log_pandas(filename='log.lammps',
                    run=1,
@@ -76,8 +79,6 @@ def read_log_pandas(filename='log.lammps',
         log = read_log_pandas(filename=path+"log.lammps",run=1)
         log.head()
     """
-
-    import pandas
 
     data, tags = read_log(filename, run, criteria_1, criteria_2)
     return pandas.DataFrame(data, columns=tags)

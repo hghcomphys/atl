@@ -1,3 +1,7 @@
+"""
+Reading data in form of matrix from input file
+"""
+
 
 def read_data(filename='data.dat', start_line=0, end_line=10000000):
     """
@@ -24,7 +28,7 @@ def read_data(filename='data.dat', start_line=0, end_line=10000000):
         data.append([float(_) for _ in line])
         # ----------------------------
         lng = len(line)
-        if prv != None and prv != lng:
+        if prv is not None and prv != lng:
             break
         # ----------------------------
         prv = lng

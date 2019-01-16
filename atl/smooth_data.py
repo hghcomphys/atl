@@ -1,3 +1,8 @@
+"""
+Smoothing a given input data
+"""
+import numpy as np
+
 
 def smooth_data(x=[], y=[], n_ave=1, step=1):
     """
@@ -11,8 +16,6 @@ def smooth_data(x=[], y=[], n_ave=1, step=1):
     xs,ys = smooth_data(x,y,5,2)
 
     """
-
-    import numpy as np
 
     N = len(y); sx = []; sy = []
     for i in range(0, N, step):

@@ -1,3 +1,8 @@
+"""
+Calculating force field parameters
+"""
+import math
+
 
 def intermol_lj_param(mol1, mol2, ignore_self_interact=False):
     """
@@ -23,7 +28,6 @@ def intermol_lj_param(mol1, mol2, ignore_self_interact=False):
     """
 
     # -------------------------------------------------------------------------------
-    import math
 
     def eps(e1, e2):
         return math.sqrt(e1 * e2)
