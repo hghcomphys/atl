@@ -4,7 +4,7 @@ Manipulating molecular frame
 import copy
 import numpy
 from random import shuffle
-import atl.io as io  # !!!
+import read_xyz as io
 
 
 class MolecularFrame(object):
