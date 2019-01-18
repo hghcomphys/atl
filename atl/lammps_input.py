@@ -20,8 +20,8 @@ def read_lammps_input(filename='lammps.lmp', attributes='Box Masses Atoms Bonds 
     data = {}
     for sec in attributes.split():
 
+        # reading number of types for atoms, bonds, angles, dihedrals, and impropers
         if sec == 'Types':
-
             types_num = ['atom types', 'bond types', 'angle types', 'dihedral types', 'improper types']
             sectionData = [0, 0, 0, 0, 0]
             with open(filename, 'r') as infile:
@@ -38,18 +38,24 @@ def read_lammps_input(filename='lammps.lmp', attributes='Box Masses Atoms Bonds 
                     if n_token==len(types_num) or n_line==100:
                         break
 
-        # Reading box sizes
+        # reading box sizes, tilted box data is also simply read
         elif sec == 'Box':
-
             sectionData = []
             with open(filename, 'r') as infile:
                 n_line = 0
                 for line in infile:
+
                     for lo, hi in zip(['xlo', 'ylo', 'zlo'], ['xhi', 'yhi', 'zhi']):
                         if lo in line and hi in line:
                             tokens = line.split()[:2]
                             sectionData.append([float(_) for _ in tokens])
-                    if len(sectionData) == 3 or n_line==100:
+
+                    if "xy xz yz" in line:
+                        tokens = line.split()[:3]
+                        sectionData.append([float(_) for _ in tokens])
+                        # print 'Info: tilted box is read'
+
+                    if len(sectionData) == 4 or n_line==100:
                         break
 
         # Reading Atoms, Bonds, Agngles, ect
@@ -122,12 +128,16 @@ def write_lammps_input(filename='lammps.lmp', dictData={}):
     types_num = ['atom types', 'bond types', 'angle types', 'dihedral types', 'improper types']
     for i, keyword in zip(range(len(types_num)), types_num):
         f.write('%d %s\n' % (dictData['Types'][i], keyword))
+
     # boxsize
     for k in dictData.keys():
         if k == 'Box':
             for i, lohi in zip(range(3), ['xlo xhi', 'ylo yhi', 'zlo zhi']):
                 f.write('%f %f %s\n' % (dictData[k][i][0], dictData[k][i][1], lohi))
-                # sections
+            if len(dictData[k])==4:
+                f.write('%f %f %f %s\n' % (dictData[k][3][0], dictData[k][3][1], dictData[k][3][2], "xy xz yz"))
+
+    # sections
     f.write('\n\n')
     for h in 'Masses Atoms Bonds Angles Dihedrals Impropers'.split():
         for k in dictData.keys():
