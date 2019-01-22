@@ -529,13 +529,18 @@ class MolecularFrame(object):
 
     @property
     def total_mass(self):
-        mass = 0
+        
+        def find_mass(self, atype):
+            for ms in self._molframe['Masses']:
+                if atype == ms[0]:
+                    return ms[1]
+        mass = 0.
         for at in self._molframe['Atoms']:
-            mass += self._molframe['Masses'][at[2]][1]
+            mass += find_mass(self, at[2])
         return mass
 
     @property
-    def ceter_of_mass(self):
+    def center_of_mass(self):
         rcm = [0., 0., 0.]
         for at in self._molframe['Atoms']:
             mass = self._molframe['Masses'][at[2]][1]
