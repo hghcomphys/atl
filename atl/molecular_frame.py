@@ -4,7 +4,8 @@ Manipulating molecular frame
 import copy
 import numpy
 from random import shuffle
-import read_xyz as io
+
+from .read_xyz import read_xyz
 
 
 class MolecularFrame(object):
@@ -384,7 +385,7 @@ class MolecularFrame(object):
         
         self.__clean_molframe()
 
-        data = io.read_xyz(filename, frame)
+        data = read_xyz(filename, frame)
         aid=1
         mid=1
         for d in data:

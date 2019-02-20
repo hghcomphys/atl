@@ -1,8 +1,8 @@
 """
 Reading lammps data frame into an array or pandas data format
 """
-import pandas
 
+import pandas
 
 def read_xyz(filename='dump.xyz', frame=-1):
     """
