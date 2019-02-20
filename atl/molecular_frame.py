@@ -6,6 +6,8 @@ import numpy
 from random import shuffle
 
 from .read_xyz import read_xyz
+from .lammps_input import read_lammps_input
+from .lammps_input import write_lammps_input
 
 
 class MolecularFrame(object):
@@ -409,13 +411,11 @@ class MolecularFrame(object):
 
     def read_lmp(self,filename):
         self.__clean_molframe()
-        from lammps_input import read_lammps_input
         data=read_lammps_input(filename, self._attributes)
         for k in data.keys():
             self._molframe[k] = data[k]
 
     def write_lmp(self, filename):
-        from lammps_input import write_lammps_input
         write_lammps_input(filename, self._molframe)
 
     # ====================================================================================================
@@ -544,7 +544,7 @@ class MolecularFrame(object):
     def center_of_mass(self):
         rcm = [0., 0., 0.]
         for at in self._molframe['Atoms']:
-            mass = self._molframe['Masses'][at[2]][1]
+            mass = self._molframe['Masses'][at[2]-1][1]
             for i in range(3):
                 rcm[i] += mass*at[i+4]
         for i in range(3):
