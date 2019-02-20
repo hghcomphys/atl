@@ -552,7 +552,7 @@ class MolecularFrame(object):
         return rcm
 
     def recenter(self, center=[0.,0.,0.], box=True):
-        rcm = self.ceter_of_mass
+        rcm = self.center_of_mass
         self.move_atoms(move=[-r+c for r,c in zip(rcm,center)], box=box)
 
 
