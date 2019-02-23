@@ -2,7 +2,6 @@ subroutine calc_rdf_fort(file_name, pbc_box, nr_mesh, r_cutoff, lateral, delta_z
 ! This subroutine calculates radial distribution function (RDF) between atoms
 ! (at this moment atoms with type) from .xyz output format via averaging over
 ! specified frames.
-
 implicit none
 
     ! arguments
@@ -185,3 +184,26 @@ implicit none
 
 end subroutine calc_rdf_fort
 
+
+!program radial_distribution_function
+!implicit none
+!
+!    real*8 ::  pbc_box(3), r_cutoff, delta_z
+!    integer :: nr_mesh, start_frame, stop_frame, step_frame
+!    logical :: lateral
+!    character(LEN=15) :: sel_type, file_name
+!
+!    pbc_box = (/19.246222, 19.246222, 19.246222/)
+!    nr_mesh = 100
+!    r_cutoff = 9.5
+!    start_frame = 50
+!    stop_frame = 201
+!    step_frame = 1
+!    lateral = .false.
+!    delta_z = 1.0
+!    sel_type = '2'
+!    file_name = 'dump.xyz'
+!
+!    call calc_rdf_fort(file_name, pbc_box, nr_mesh, r_cutoff, lateral, delta_z, sel_type, start_frame, stop_frame, step_frame)
+!
+!end program radial_distribution_function
