@@ -1,6 +1,7 @@
 subroutine calc_rdf_fort(file_name, pbc_box, nr_mesh, r_cutoff, lateral, delta_z, sel_type, start_frame, stop_frame, step_frame)
-! This subroutine calculates radial distribution function (RDF) between atoms (at the moment same type)
-! from .xyz output format via averaging over specified frames.
+! This subroutine calculates radial distribution function (RDF) between atoms
+! (at this moment atoms with type) from .xyz output format via averaging over
+! specified frames.
 
 implicit none
 
