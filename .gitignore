@@ -1,5 +1,8 @@
 *.pyc
 .idea
 .ipynb_checkpoints/
+*.so
+*.dat
+*.out.*
 
 
