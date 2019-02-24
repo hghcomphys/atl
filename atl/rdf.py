@@ -16,11 +16,6 @@ def calculate_rdf(file_name='dump.xyz', sel_type='', pbc_box=[0, 0, 0],
     os.system("f2py -c rdf_fort.f90 -m rdf_fort")
     import atl.rdf_fort
 
-    for i in range(3):
-        if pbc_box[i] == 0.0:
-            pbc_box[i] = 1.0E6  # setting large box size to disable pbc
-            print ('disable pbc')
-
     start_frame, stop_frame, step_frame = frames[0], frames[1], frames[2]
 
     # calling Fortran subroutine

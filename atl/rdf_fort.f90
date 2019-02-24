@@ -20,7 +20,7 @@ implicit none
     real*8 :: atoms_pos(MAXSIZE,3)
     character(LEN=15):: atoms_type(MAXSIZE)
     real*8 :: r(MESHSIZE), g_r(MESHSIZE)
-    real*8 :: dr, rij, dx ,dy , dz, rho
+    real*8 :: dr, rij, dx ,dy , dz, rho, box_vol
     integer :: natoms, i, j, nsel, ind, sel(MAXSIZE)
     integer :: current_frame, read_frame
     integer :: io
@@ -99,17 +99,14 @@ implicit none
 
                     ! applying PBC
                     dx = atoms_pos(sel(i),1) - atoms_pos(sel(j),1)
-                    if (dx.gt. pbc_box(1)*0.5d0) dx = dx - pbc_box(1)
-                    if (dx.lt.-pbc_box(1)*0.5d0) dx = dx + pbc_box(1)
+                    call apply_pbc(pbc_box(1), dx)
                     ! ---
                     dy = atoms_pos(sel(i),2) - atoms_pos(sel(j),2)
-                    if (dy.gt. pbc_box(2)*0.5d0) dy = dy - pbc_box(2)
-                    if (dy.lt.-pbc_box(2)*0.5d0) dy = dy + pbc_box(2)
+                    call apply_pbc(pbc_box(2), dy)
                     ! ---
                     if (.not.lateral) then
                         dz = atoms_pos(sel(i),3) - atoms_pos(sel(j),3)
-                        if (dz.gt. pbc_box(3)*0.5d0) dz = dz - pbc_box(3)
-                        if (dz.lt.-pbc_box(3)*0.5d0) dz = dz + pbc_box(3)
+                        call apply_pbc(pbc_box(3), dz)
                     endif
 
                     ! ----------------------
@@ -152,7 +149,9 @@ implicit none
 
     ! ------------------------------
 
-    rho = float(nsel)/(pbc_box(1)*pbc_box(2)*pbc_box(3))
+    box_vol = pbc_box(1)*pbc_box(2)*pbc_box(3)
+    rho = float(nsel)
+    if (box_vol .gt. 1.0d-3) rho = rho/box_vol
     !write(*,*) "n-density", rho
 
     do i = 1, nr_mesh
@@ -183,6 +182,23 @@ implicit none
     !write(*,*) "subroutine run succesfully."
 
 end subroutine calc_rdf_fort
+
+
+subroutine apply_pbc(length, dist)
+    ! applying pbc along the specified direction
+    implicit none
+
+    real*8, intent(in) :: length
+    real*8, intent(inout) :: dist
+
+    if (length .gt. 1.0d-3) then  ! skip 0 size box length
+
+        if (dist .gt.  length*0.5d0) dist = dist - length
+        if (dist .lt. -length*0.5d0) dist = dist + length
+    endif
+
+
+end subroutine apply_pbc
 
 
 !program radial_distribution_function
