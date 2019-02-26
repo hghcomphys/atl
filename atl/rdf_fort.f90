@@ -1,7 +1,6 @@
-subroutine calc_rdf_fort(file_name, pbc_box, nr_mesh, r_cutoff, lateral, delta_z, sel_type, start_frame, stop_frame, step_frame)
-! This subroutine calculates radial distribution function (RDF) between atoms
-! (at this moment atoms with type) from .xyz output format via averaging over
-! specified frames.
+subroutine calc_rdf_fort(file_name, sel_i, sel_j, pbc_box, nr_mesh, r_cutoff, lateral, delta_z, frames)
+! This subroutine calculates radial distribution function (RDF) between two atom types
+! from .xyz format via averaging over specified frames.
 implicit none
 
     ! arguments
@@ -10,23 +9,35 @@ implicit none
     integer, intent(in) :: nr_mesh
     real*8, intent(in) :: r_cutoff, delta_z
     logical, intent(in) :: lateral
-    character(LEN=15), intent(in) :: sel_type
-    integer, intent(in) :: start_frame, stop_frame, step_frame
+    character(LEN=15), intent(in) :: sel_i, sel_j
+    integer, intent(in) :: frames(3)
 
     INTEGER, PARAMETER :: MAXSIZE=200000, MESHSIZE=5000
     REAL*8, PARAMETER :: PI=3.141592d0
 
     ! local variables
     real*8 :: atoms_pos(MAXSIZE,3)
-    character(LEN=15):: atoms_type(MAXSIZE)
+    character(LEN=15):: atoms_type(MAXSIZE), sel_type(2)
     real*8 :: r(MESHSIZE), g_r(MESHSIZE)
-    real*8 :: dr, rij, dx ,dy , dz, rho, box_vol
-    integer :: natoms, i, j, nsel, ind, sel(MAXSIZE)
-    integer :: current_frame, read_frame
+    real*8 :: dr, rij, dx ,dy , dz, coef, box_vol, rho
+    integer :: natoms, i, j, ind
+    integer :: nsel(2), sel(MAXSIZE,2), nsel_tot
+    integer :: current_frame, read_frame, start_frame, stop_frame, step_frame
     integer :: io
 
     ! opennig files
     open(1,file=trim(file_name), status='old')
+
+    ! setting atom types for partial-RDF
+    sel_type(1) = sel_i
+    sel_type(2) = sel_j
+
+    ! setting frames
+    start_frame = frames(1)
+    stop_frame = frames(2)
+    step_frame = frames(3)
+
+    ! =======================
 
     !write(*,*) '---------'
     !write(*,*) file_name
@@ -35,7 +46,7 @@ implicit none
     !write(*,*) r_cutoff
     !write(*,*) delta_z
     !write(*,*) lateral
-    !write(*,*) sel_type
+    !write(*,*) sel_i, sel_j
     !write(*,*) start_frame
     !write(*,*) stop_frame
     !write(*,*) step_frame
@@ -71,7 +82,7 @@ implicit none
 
             read_frame = read_frame + 1
 
-            if (read_frame == 1) write(*,*) "N atoms:", natoms
+            !if (read_frame == 1) write(*,*) "N atoms:", natoms
             ! loop over all atoms and reading atomic types and positions
             do i = 1, natoms
                 read(1,*) atoms_type(i), atoms_pos(i,1), atoms_pos(i,2), atoms_pos(i,3)
@@ -81,31 +92,32 @@ implicit none
 
             nsel = 0
             do i = 1, natoms
-              if( trim(atoms_type(i)) == sel_type ) then !atom selection
-                nsel = nsel + 1
-                sel(nsel) = i
-              endif
+                do j = 1, 2
+                  if( trim(atoms_type(i)) == sel_type(j) ) then !atom selection (i)
+                    nsel(j) = nsel(j) + 1
+                    sel(nsel(j),j) = i
+                  endif
+                enddo
             enddo
-
-            !if (current_frame == start_frame) write(*,*) 'Selected atoms', nsel
+            if (current_frame == start_frame) write(*,*) 'Selected atoms', nsel(1), nsel(2)
 
             ! -------------------------------------
 
-            do i = 1, nsel
+            do i = 1, nsel(1)
 
-              do j = 1, nsel
+              do j = 1, nsel(2)
 
-                    if (i == j) cycle  ! exclude self-counting
+                    if (sel(i,1) == sel(j,2)) cycle  ! exclude self-counting
 
                     ! applying PBC
-                    dx = atoms_pos(sel(i),1) - atoms_pos(sel(j),1)
+                    dx = atoms_pos(sel(i,1),1) - atoms_pos(sel(j,2),1)
                     call apply_pbc(pbc_box(1), dx)
                     ! ---
-                    dy = atoms_pos(sel(i),2) - atoms_pos(sel(j),2)
+                    dy = atoms_pos(sel(i,1),2) - atoms_pos(sel(j,2),2)
                     call apply_pbc(pbc_box(2), dy)
                     ! ---
                     if (.not.lateral) then
-                        dz = atoms_pos(sel(i),3) - atoms_pos(sel(j),3)
+                        dz = atoms_pos(sel(i,1),3) - atoms_pos(sel(j,2),3)
                         call apply_pbc(pbc_box(3), dz)
                     endif
 
@@ -120,7 +132,7 @@ implicit none
                         endif
 
                     else
-                        if( abs(atoms_pos(sel(i),3) - atoms_pos(sel(j),3)) .lt. 0.5d0*delta_z ) then
+                        if( abs(atoms_pos(sel(i,1),3) - atoms_pos(sel(j,2),3)) .lt. 0.5d0*delta_z ) then
                             rij = sqrt( dx**2 + dy**2 )
                             if (rij.le.r_cutoff) then
                                 ind = int(rij/dr) + 1
@@ -150,8 +162,10 @@ implicit none
     ! ------------------------------
 
     box_vol = pbc_box(1)*pbc_box(2)*pbc_box(3)
-    rho = float(nsel)
+    nsel_tot = nsel(1) + nsel(2)
+    rho = 1.0d0
     if (box_vol .gt. 1.0d-3) rho = rho/box_vol
+    coef = (1.d0/rho)/(nsel(1)*nsel(2))/2.0d0 ! factor 2 corrects double-counting
     !write(*,*) "n-density", rho
 
     do i = 1, nr_mesh
@@ -160,10 +174,10 @@ implicit none
       g_r(i) = g_r(i)/read_frame
 
       if (.not.lateral) then
-        g_r(i) = g_r(i)/( PI*4./3.*(r(i+1)**3-r(i)**3) )/rho/nsel/2
+        g_r(i) = g_r(i)/( PI*4./3.*(r(i+1)**3-r(i)**3) )*coef
 
       else
-        g_r(i) = g_r(i)/( PI*( r(i+1)**2-r(i)**2)*delta_z )/rho/nsel/2
+        g_r(i) = g_r(i)/( PI*( r(i+1)**2-r(i)**2)*delta_z )*coef
 
       endif
 
@@ -197,7 +211,6 @@ subroutine apply_pbc(length, dist)
         if (dist .lt. -length*0.5d0) dist = dist + length
     endif
 
-
 end subroutine apply_pbc
 
 
@@ -207,7 +220,7 @@ end subroutine apply_pbc
 !    real*8 ::  pbc_box(3), r_cutoff, delta_z
 !    integer :: nr_mesh, start_frame, stop_frame, step_frame
 !    logical :: lateral
-!    character(LEN=15) :: sel_type, file_name
+!    character(LEN=15) :: sel_type(2), file_name
 !
 !    pbc_box = (/19.246222, 19.246222, 19.246222/)
 !    nr_mesh = 100
@@ -217,7 +230,7 @@ end subroutine apply_pbc
 !    step_frame = 1
 !    lateral = .false.
 !    delta_z = 1.0
-!    sel_type = '2'
+!    sel_type = (/'2', '2'/)
 !    file_name = 'dump.xyz'
 !
 !    call calc_rdf_fort(file_name, pbc_box, nr_mesh, r_cutoff, lateral, delta_z, sel_type, start_frame, stop_frame, step_frame)

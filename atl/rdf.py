@@ -2,7 +2,7 @@
 Python wrapper for calling subroutine from rdf_fort.90 using f2py.
 """
 
-def calculate_rdf(file_name='dump.xyz', sel_type='', pbc_box=[0, 0, 0],
+def calculate_rdf(file_name='dump.xyz', sel_type=['',''], pbc_box=[0, 0, 0],
        nr_mesh=100, r_cutoff=10.0,
        lateral=False, delta_z=1.0,
        frames=[1, 1000000, 1]):
@@ -13,11 +13,9 @@ def calculate_rdf(file_name='dump.xyz', sel_type='', pbc_box=[0, 0, 0],
     """
     import os
     # making .so file (ih has to be automated)
-    os.system("f2py -c rdf_fort.f90 -m rdf_fort")
-    import atl.rdf_fort
-
-    start_frame, stop_frame, step_frame = frames[0], frames[1], frames[2]
+    # os.system("f2py -c rdf_fort.f90 -m rdf_fort")
+    import atl.rdf_fort # !!! (makefile needed)
 
     # calling Fortran subroutine
-    atl.rdf_fort.calc_rdf_fort(file_name, pbc_box, nr_mesh, r_cutoff, lateral, delta_z,
-                       sel_type, start_frame, stop_frame, step_frame)
+    atl.rdf_fort.calc_rdf_fort(file_name, sel_type[0], sel_type[1], pbc_box,
+                               nr_mesh, r_cutoff, lateral, delta_z, frames)
