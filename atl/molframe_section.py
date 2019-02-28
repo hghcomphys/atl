@@ -3,40 +3,78 @@ Defining molecular sections meta-class and subsequent classes
 
 """
 
-from abc import	ABCMeta, abstractmethod
+#from abc import	ABCMeta, abstractmethod
+from atl.error import int_ge_zero
 
 
-class MolFrameBlock(metaclass=ABCMeta):
+class MolFrameBlock:
+    """
+    Defining base class for each molecular frame block.
+    """
 
-    # @abstractmethod
-    # def __init__(self):
-    #     pass
+    def __init__(self, name):
+        self.items = []
+        self.name = name
 
-    @abstractmethod
-    def add(self):
-        pass
+    def add(self, item):
+        self.items.append(item)
 
-    @abstractmethod
     def get_list(self):
-        pass
+        return self.items
 
-    # @abstractmethod
-    # def set_data(self):
-    #     pass
-
-    @abstractmethod
     def __str__(self):
-        pass
+        out = self.name + "\n\n"
+        for atom in self.items:
+            out += str(atom) + '\n'
+        return out
 
 
-def int_ge_zero(n):
+class AtomsBlock(MolFrameBlock):
 
-    int_n = int(n)
-    if int_n < 0:
-        AssertionError("Unexpected negative value!")
-    else:
-        return int_n
+    def __init__(self):
+        MolFrameBlock.__init__(self, 'Atoms')
 
+
+class BondsBlock(MolFrameBlock):
+
+    def __init__(self):
+        MolFrameBlock.__init__(self, 'Bonds')
+
+
+class AnglesBlock(MolFrameBlock):
+
+    def __init__(self):
+        MolFrameBlock.__init__(self, 'Angles')
+
+
+class Dihedrals(MolFrameBlock):
+
+    def __init__(self):
+        MolFrameBlock.__init__(self, 'Dihedrals')
+
+
+class Impropers(MolFrameBlock):
+
+    def __init__(self):
+        MolFrameBlock.__init__(self, 'Impropers')
+
+
+# class Box(MolFrameSection):
+#
+#     def get_data(self):
+#         return "Box data"
+#
+#
+# class Masses(MolFrameSection):
+#
+#     def get_data(self):
+#         return "Masses data"
+#
+#
+# class Types(MolFrameSection):
+#
+#     def get_data(self):
+#         return "Masses data"
 
 class Atom:
 
@@ -65,24 +103,6 @@ class Atom:
         return out
 
 
-class AtomsBlock(MolFrameBlock):
-
-    def __init__(self):
-        self.atoms = []
-
-    def add(self, atom):
-        self.atoms.append(atom)
-
-    def get_list(self):
-        return self.atoms
-
-    def __str__(self):
-        out = "Atoms\n\n"
-        for atom in self.atoms:
-            out += str(atom) + '\n'
-        return out
-
-
 class Bond:
 
     def __init__(self, bid, btype, aid_i, aid_j, label=''):
@@ -102,24 +122,6 @@ class Bond:
         for attribute in [self.bid, self.btype, self.aid_i, self.aid_j, self.label]:
             out += str(attribute) + ' '
         return out
-
-
-class BondsBlock(MolFrameBlock):
-
-        def __init__(self):
-            self.bonds = []
-
-        def add(self, bond):
-            self.bonds.append(bond)
-
-        def get_list(self):
-            return self.bonds
-
-        def __str__(self):
-            out = "Bonds\n\n"
-            for bond in self.bonds:
-                out += str(bond) + '\n'
-            return out
 
 
 class Angle:
@@ -144,54 +146,6 @@ class Angle:
         return out
 
 
-class AnglesBlock(MolFrameBlock):
-
-    def __init__(self):
-        self.angles = []
-
-    def add(self, angle):
-        self.angles.append(angle)
-
-    def get_list(self):
-        return self.angles
-
-    def __str__(self):
-        out = "Angles\n\n"
-        for angle in self.angles:
-            out += str(angle) + '\n'
-        return out
-
-
-# class Dihedrals(MolFrameSection):
-#
-#     def get_data(self):
-#         return "Dihedrals data"
-#
-#
-# class Impropers(MolFrameSection):
-#
-#     def get_data(self):
-#         return "Impropers data"
-#
-#
-# class Box(MolFrameSection):
-#
-#     def get_data(self):
-#         return "Box data"
-#
-#
-# class Masses(MolFrameSection):
-#
-#     def get_data(self):
-#         return "Masses data"
-#
-#
-# class Types(MolFrameSection):
-#
-#     def get_data(self):
-#         return "Masses data"
-
-
 if __name__ == '__main__':
 
     atom1 = Atom(aid=1, mid=1, atype=1, q=0, x=0.3, y=0, z=0, imx=0, imy=0, imz=0, label='')
@@ -201,6 +155,7 @@ if __name__ == '__main__':
     atoms_block.add(atom1)
     atoms_block.add(atom2)
     print (atoms_block)
+
 
     bond1 = Bond(bid=1, btype=1, aid_i=1, aid_j=2)
     bond2 = Bond(bid=2, btype=1, aid_i=1, aid_j=2)
