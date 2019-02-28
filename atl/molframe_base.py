@@ -78,11 +78,11 @@ class ImpropersBlock(MolFrameBlock):
 
 class Atom:
 
-    def __init__(self, aid, mid, atype, q, x, y, z, imx=0, imy=0, imz=0, label=''):
+    def __init__(self, aid, mid, typ, q, x, y, z, imx=0, imy=0, imz=0, label=''):
         try:
             self.aid = int_ge_zero(aid)     # atom id
             self.mid = int_ge_zero(mid)     # molecule id
-            self.atype = int_ge_zero(atype) # atom type
+            self.typ = int_ge_zero(typ)     # atom type
             self.q = float(q)        # atom charge
             self.x = float(x)        # x-coordinate
             self.y = float(y)        # y-coordinate
@@ -97,7 +97,7 @@ class Atom:
 
     def __str__(self):
         out = ''
-        for attribute in [self.aid, self.mid, self.atype, self.q, self.x, self.y, self.z,
+        for attribute in [self.aid, self.mid, self.typ, self.q, self.x, self.y, self.z,
                           self.imx, self.imy, self.imz, self.label]:
             out += str(attribute) + ' '
         return out
@@ -105,11 +105,11 @@ class Atom:
 
 class Bond:
 
-    def __init__(self, bid, btype, aid_i, aid_j, label=''):
+    def __init__(self, bid, typ, aid_i, aid_j, label=''):
 
         try:
             self.bid = int_ge_zero(bid)      # bond id
-            self.btype = int_ge_zero(btype)  # bond type
+            self.typ = int_ge_zero(typ)      # bond type
             self.aid_i = int_ge_zero(aid_i)  # atom id (i)
             self.aid_j = int_ge_zero(aid_j)  # atom id (j)
             self.label = str(label)          # bond label
@@ -119,18 +119,18 @@ class Bond:
 
     def __str__(self):
         out = ''
-        for attribute in [self.bid, self.btype, self.aid_i, self.aid_j, self.label]:
+        for attribute in [self.bid, self.typ, self.aid_i, self.aid_j, self.label]:
             out += str(attribute) + ' '
         return out
 
 
 class Angle:
 
-    def __init__(self, anid, antype, aid_i, aid_j, aid_k, label=''):
+    def __init__(self, anid, typ, aid_i, aid_j, aid_k, label=''):
 
         try:
             self.anid = int_ge_zero(anid)      # angle id
-            self.antype = int_ge_zero(antype)  # angle type
+            self.typ = int_ge_zero(typ)        # angle type
             self.aid_i = int_ge_zero(aid_i)    # atom id (i)
             self.aid_j = int_ge_zero(aid_j)    # atom id (j)
             self.aid_k = int_ge_zero(aid_k)    # atom id (k)
@@ -141,18 +141,18 @@ class Angle:
 
     def __str__(self):
         out = ''
-        for attribute in [self.anid, self.antype, self.aid_i, self.aid_j, self.aid_j, self.label]:
+        for attribute in [self.anid, self.typ, self.aid_i, self.aid_j, self.aid_j, self.label]:
             out += str(attribute) + ' '
         return out
 
 
 class Dihedral:
 
-    def __init__(self, did, dtype, aid_i, aid_j, aid_k, aid_l, label=''):
+    def __init__(self, did, typ, aid_i, aid_j, aid_k, aid_l, label=''):
 
         try:
             self.did = int_ge_zero(did)        # angle id
-            self.dtype = int_ge_zero(dtype)    # angle type
+            self.typ = int_ge_zero(typ)        # angle type
             self.aid_i = int_ge_zero(aid_i)    # atom id (i)
             self.aid_j = int_ge_zero(aid_j)    # atom id (j)
             self.aid_k = int_ge_zero(aid_k)    # atom id (k)
@@ -164,18 +164,18 @@ class Dihedral:
 
     def __str__(self):
         out = ''
-        for attribute in [self.did, self.dtype, self.aid_i, self.aid_j, self.aid_j, self.aid_l, self.label]:
+        for attribute in [self.did, self.typ, self.aid_i, self.aid_j, self.aid_j, self.aid_l, self.label]:
             out += str(attribute) + ' '
         return out
 
 
 class Improper:
 
-    def __init__(self, iid, itype, aid_i, aid_j, aid_k, aid_l, label=''):
+    def __init__(self, iid, typ, aid_i, aid_j, aid_k, aid_l, label=''):
 
         try:
             self.iid = int_ge_zero(iid)        # angle id
-            self.itype = int_ge_zero(itype)    # angle type
+            self.itype = int_ge_zero(typ)      # angle type
             self.aid_i = int_ge_zero(aid_i)    # atom id (i)
             self.aid_j = int_ge_zero(aid_j)    # atom id (j)
             self.aid_k = int_ge_zero(aid_k)    # atom id (k)
@@ -192,35 +192,38 @@ class Improper:
         return out
 
 
-
-
-
+# ==========================================================================================
 
 if __name__ == '__main__':
 
-    atom1 = Atom(aid=1, mid=1, atype=1, q=0, x=0.3, y=0, z=0, imx=0, imy=0, imz=0, label='')
-    atom2 = Atom(aid=2, mid=1, atype=1, q=0, x=0.5, y=0, z=0, imx=0, imy=0, imz=0, label='')
+    atom1 = Atom(aid=1, mid=1, typ=1, q=0, x=0.3, y=0, z=0, imx=0, imy=0, imz=0, label='')
+    atom2 = Atom(aid=2, mid=1, typ=1, q=0, x=0.5, y=0, z=0, imx=0, imy=0, imz=0, label='')
     atoms_block = AtomsBlock()
     atoms_block.add(atom1)
     atoms_block.add(atom2)
     print (atoms_block)
 
-    bond1 = Bond(bid=1, btype=1, aid_i=1, aid_j=2)
-    bond2 = Bond(bid=2, btype=1, aid_i=1, aid_j=2)
+    bond1 = Bond(bid=1, typ=1, aid_i=1, aid_j=2)
+    bond2 = Bond(bid=2, typ=1, aid_i=1, aid_j=2)
     bonds_block = BondsBlock()
     bonds_block.add(bond1)
     bonds_block.add(bond2)
     print (bonds_block)
 
-    angle1 = Angle(anid=1, antype=1, aid_i=2, aid_j=4, aid_k=5, label=' # water angle')
+    angle1 = Angle(anid=1, typ=1, aid_i=2, aid_j=4, aid_k=5, label=' # water angle')
     angles_block = AnglesBlock()
     angles_block.add(angle1)
     print (angles_block)
 
-    dihedral1 = Dihedral(did=1, dtype=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
+    dihedral1 = Dihedral(did=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
     dihedral_block = DihedralsBlock()
     dihedral_block.add(dihedral1)
     print (dihedral_block)
+
+    improper1 = Improper(iid=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
+    improper_block = ImpropersBlock()
+    improper_block.add(improper1)
+    print (improper_block)
 
     # Atoms = MolFrameBlock('Atoms')
     # Atoms.add()
