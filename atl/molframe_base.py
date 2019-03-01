@@ -28,32 +28,35 @@ class MolFrameBlock:
             out += str(atom) + '\n'
         return out
 
+    def make(block_name):
+        return eval(str(block_name))()
 
-class AtomsBlock(MolFrameBlock):
+
+class Atoms(MolFrameBlock):
 
     def __init__(self):
         MolFrameBlock.__init__(self, 'Atoms')
 
 
-class BondsBlock(MolFrameBlock):
+class Bonds(MolFrameBlock):
 
     def __init__(self):
         MolFrameBlock.__init__(self, 'Bonds')
 
 
-class AnglesBlock(MolFrameBlock):
+class Angles(MolFrameBlock):
 
     def __init__(self):
         MolFrameBlock.__init__(self, 'Angles')
 
 
-class DihedralsBlock(MolFrameBlock):
+class Dihedrals(MolFrameBlock):
 
     def __init__(self):
         MolFrameBlock.__init__(self, 'Dihedrals')
 
 
-class ImpropersBlock(MolFrameBlock):
+class Impropers(MolFrameBlock):
 
     def __init__(self):
         MolFrameBlock.__init__(self, 'Impropers')
@@ -198,32 +201,32 @@ if __name__ == '__main__':
 
     atom1 = Atom(aid=1, mid=1, typ=1, q=0, x=0.3, y=0, z=0, imx=0, imy=0, imz=0, label='')
     atom2 = Atom(aid=2, mid=1, typ=1, q=0, x=0.5, y=0, z=0, imx=0, imy=0, imz=0, label='')
-    atoms_block = AtomsBlock()
+    atoms_block = MolFrameBlock.make('Atoms')
     atoms_block.add(atom1)
     atoms_block.add(atom2)
     print (atoms_block)
 
-    bond1 = Bond(bid=1, typ=1, aid_i=1, aid_j=2)
-    bond2 = Bond(bid=2, typ=1, aid_i=1, aid_j=2)
-    bonds_block = BondsBlock()
-    bonds_block.add(bond1)
-    bonds_block.add(bond2)
-    print (bonds_block)
-
-    angle1 = Angle(anid=1, typ=1, aid_i=2, aid_j=4, aid_k=5, label=' # water angle')
-    angles_block = AnglesBlock()
-    angles_block.add(angle1)
-    print (angles_block)
-
-    dihedral1 = Dihedral(did=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
-    dihedral_block = DihedralsBlock()
-    dihedral_block.add(dihedral1)
-    print (dihedral_block)
-
-    improper1 = Improper(iid=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
-    improper_block = ImpropersBlock()
-    improper_block.add(improper1)
-    print (improper_block)
+    # bond1 = Bond(bid=1, typ=1, aid_i=1, aid_j=2)
+    # bond2 = Bond(bid=2, typ=1, aid_i=1, aid_j=2)
+    # bonds_block = BondsBlock()
+    # bonds_block.add(bond1)
+    # bonds_block.add(bond2)
+    # print (bonds_block)
+    #
+    # angle1 = Angle(anid=1, typ=1, aid_i=2, aid_j=4, aid_k=5, label=' # water angle')
+    # angles_block = AnglesBlock()
+    # angles_block.add(angle1)
+    # print (angles_block)
+    #
+    # dihedral1 = Dihedral(did=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
+    # dihedral_block = DihedralsBlock()
+    # dihedral_block.add(dihedral1)
+    # print (dihedral_block)
+    #
+    # improper1 = Improper(iid=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
+    # improper_block = ImpropersBlock()
+    # improper_block.add(improper1)
+    # print (improper_block)
 
     # Atoms = MolFrameBlock('Atoms')
     # Atoms.add()
