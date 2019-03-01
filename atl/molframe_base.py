@@ -3,85 +3,79 @@ Defining molecular sections meta-class and subsequent classes
 
 """
 
-#from abc import	ABCMeta, abstractmethod
+from abc import	ABCMeta, abstractmethod
 from atl.error import int_ge_zero
 
 
-class MolFrameBlock:
+class MolFrameSection:
     """
-    Defining base class for each molecular frame block.
+    Defining base class for each molecular frame section.
     """
-
     def __init__(self, name):
-        self.items = []
+        self.sections = []
         self.name = name
 
-    def add(self, item):
-        self.items.append(item)
+    def add(self, section):
+        self.sections.append(section)
 
-    def get_list(self):
-        return self.items
+    def get(self):
+        return self.sections
 
     def __str__(self):
         out = self.name + "\n\n"
-        for atom in self.items:
-            out += str(atom) + '\n'
+        for section in self.sections:
+            out += str(section) + '\n'
         return out
 
     # static method, this is implicitly a class method
-    def make(block_object_name):
+    def make(section):
         try:
-            block_object = eval(str(block_object_name))()
+            block_object = eval(str(section))()
 
         except (SyntaxError, NameError, TypeError):
             raise AssertionError("Unexpected type for MolFrameBlock!")
         return block_object
 
 
-class Atoms(MolFrameBlock):
+class AtomsSection(MolFrameSection):
+    def __init__(self):
+        MolFrameSection.__init__(self, "Atoms")
+
+
+class BondsSection(MolFrameSection):
+    def __init__(self):
+        MolFrameSection.__init__(self, "Bonds")
+
+
+class AnglesSection(MolFrameSection):
+    def __init__(self):
+        MolFrameSection.__init__(self, "Angles")
+
+
+class DihedralsSection(MolFrameSection):
+    def __init__(self):
+        MolFrameSection.__init__(self, "Dihedrals")
+
+
+class ImpropersSection(MolFrameSection):
+    def __init__(self):
+        MolFrameSection.__init__(self, "Impropers")
+
+
+class BoxSection(MolFrameSection):
 
     def __init__(self):
-        MolFrameBlock.__init__(self, 'Atoms')
+        MolFrameSection.__init__(self, 'Box')
+        self.items = None
 
-
-class Bonds(MolFrameBlock):
-
-    def __init__(self):
-        MolFrameBlock.__init__(self, 'Bonds')
-
-
-class Angles(MolFrameBlock):
-
-    def __init__(self):
-        MolFrameBlock.__init__(self, 'Angles')
-
-
-class Dihedrals(MolFrameBlock):
-
-    def __init__(self):
-        MolFrameBlock.__init__(self, 'Dihedrals')
-
-
-class Impropers(MolFrameBlock):
-
-    def __init__(self):
-        MolFrameBlock.__init__(self, 'Impropers')
-
-
-class Box(MolFrameBlock):
-
-    def __init__(self):
-        MolFrameBlock.__init__(self, 'Box')
-        self.items = None  # always len(items)=1
-
-    def add(self, cell_obj):
-        if isinstance(cell_obj, Cell):
-            self.items = cell_obj
+    def add(self, section):
+        if isinstance(section, Cell):
+            self.sections = section  # always len(items)=1 (replacing)
         else:
             raise AssertionError("Unexpected type for Box!")
 
     def __str__(self):
-        return str(self.items)
+        return str(self.sections)
 
 
 # class Masses(MolFrameSection):
@@ -255,37 +249,34 @@ if __name__ == '__main__':
 
     atom1 = Atom(aid=1, mid=1, typ=1, q=0, x=0.3, y=0, z=0, imx=0, imy=0, imz=0, label='')
     atom2 = Atom(aid=2, mid=1, typ=1, q=0, x=0.5, y=0, z=0, imx=0, imy=0, imz=0, label='')
-    atoms_block = MolFrameBlock.make('Atoms')
+    atoms_block = AtomsSection()
     atoms_block.add(atom1)
     atoms_block.add(atom2)
     print (atoms_block)
 
     bond1 = Bond(bid=1, typ=1, aid_i=1, aid_j=2)
     bond2 = Bond(bid=2, typ=1, aid_i=1, aid_j=2)
-    bonds_block = Bonds()
+    bonds_block = BondsSection()
     bonds_block.add(bond1)
     bonds_block.add(bond2)
     print (bonds_block)
 
     angle1 = Angle(anid=1, typ=1, aid_i=2, aid_j=4, aid_k=5, label=' # water angle')
-    angles_block = MolFrameBlock.make('Angles')
+    angles_block = AnglesSection()
     angles_block.add(angle1)
     print (angles_block)
 
     dihedral1 = Dihedral(did=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
-    dihedral_block = Dihedrals()
+    dihedral_block = DihedralsSection()
     dihedral_block.add(dihedral1)
     print (dihedral_block)
 
     improper1 = Improper(iid=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
-    improper_block = Impropers()
+    improper_block = ImpropersSection()
     improper_block.add(improper1)
     print (improper_block)
 
     cell1 = Cell(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
-    box_block = MolFrameBlock.make("Box")
+    box_block = MolFrameSection.make("BoxSection")
     box_block.add(cell1)
     print (box_block)
-
-
-
