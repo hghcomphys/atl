@@ -72,7 +72,7 @@ class Box(MolFrameBlock):
 
     def __init__(self):
         MolFrameBlock.__init__(self, 'Box')
-        self.items = None  # always len(items)==1
+        self.items = None  # always len(items)=1
 
     def add(self, cell_obj):
         if isinstance(cell_obj, Cell):
@@ -248,10 +248,8 @@ class Cell:
             out += key + '\n'
         return out
 
-
-
-
 # ==========================================================================================
+
 
 if __name__ == '__main__':
 
@@ -270,7 +268,7 @@ if __name__ == '__main__':
     print (bonds_block)
 
     angle1 = Angle(anid=1, typ=1, aid_i=2, aid_j=4, aid_k=5, label=' # water angle')
-    angles_block = Angles()
+    angles_block = MolFrameBlock.make('Angles')
     angles_block.add(angle1)
     print (angles_block)
 
@@ -285,7 +283,7 @@ if __name__ == '__main__':
     print (improper_block)
 
     cell1 = Cell(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
-    box_block = Box() #MolFrameBlock.make("Box")
+    box_block = MolFrameBlock.make("Box")
     box_block.add(cell1)
     print (box_block)
 
