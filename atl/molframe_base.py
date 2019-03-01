@@ -28,8 +28,15 @@ class MolFrameBlock:
             out += str(atom) + '\n'
         return out
 
-    def make(block_name):
-        return eval(str(block_name))()
+    # static method, this is implicitly a class method
+    def make(block_object_name):
+
+        try:
+            block_object = eval(str(block_object_name))()
+
+        except (SyntaxError, NameError, TypeError):
+            raise AssertionError("Unexpected type for MolFrameBlock!")
+        return block_object
 
 
 class Atoms(MolFrameBlock):
@@ -204,6 +211,7 @@ if __name__ == '__main__':
     atoms_block = MolFrameBlock.make('Atoms')
     atoms_block.add(atom1)
     atoms_block.add(atom2)
+    print (type(atoms_block))
     print (atoms_block)
 
     # bond1 = Bond(bid=1, typ=1, aid_i=1, aid_j=2)
