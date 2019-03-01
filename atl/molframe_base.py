@@ -30,7 +30,6 @@ class MolFrameBlock:
 
     # static method, this is implicitly a class method
     def make(block_object_name):
-
         try:
             block_object = eval(str(block_object_name))()
 
@@ -69,12 +68,22 @@ class Impropers(MolFrameBlock):
         MolFrameBlock.__init__(self, 'Impropers')
 
 
-# class Box(MolFrameSection):
-#
-#     def get_data(self):
-#         return "Box data"
-#
-#
+class Box(MolFrameBlock):
+
+    def __init__(self):
+        MolFrameBlock.__init__(self, 'Box')
+        self.items = None  # always len(items)==1
+
+    def add(self, cell_obj):
+        if isinstance(cell_obj, Cell):
+            self.items = cell_obj
+        else:
+            raise AssertionError("Unexpected type for Box!")
+
+    def __str__(self):
+        return str(self.items)
+
+
 # class Masses(MolFrameSection):
 #
 #     def get_data(self):
@@ -85,6 +94,7 @@ class Impropers(MolFrameBlock):
 #
 #     def get_data(self):
 #         return "Masses data"
+
 
 class Atom:
 
@@ -116,7 +126,6 @@ class Atom:
 class Bond:
 
     def __init__(self, bid, typ, aid_i, aid_j, label=''):
-
         try:
             self.bid = int_ge_zero(bid)      # bond id
             self.typ = int_ge_zero(typ)      # bond type
@@ -137,7 +146,6 @@ class Bond:
 class Angle:
 
     def __init__(self, anid, typ, aid_i, aid_j, aid_k, label=''):
-
         try:
             self.anid = int_ge_zero(anid)      # angle id
             self.typ = int_ge_zero(typ)        # angle type
@@ -159,7 +167,6 @@ class Angle:
 class Dihedral:
 
     def __init__(self, did, typ, aid_i, aid_j, aid_k, aid_l, label=''):
-
         try:
             self.did = int_ge_zero(did)        # angle id
             self.typ = int_ge_zero(typ)        # angle type
@@ -182,7 +189,6 @@ class Dihedral:
 class Improper:
 
     def __init__(self, iid, typ, aid_i, aid_j, aid_k, aid_l, label=''):
-
         try:
             self.iid = int_ge_zero(iid)        # angle id
             self.itype = int_ge_zero(typ)      # angle type
@@ -202,6 +208,49 @@ class Improper:
         return out
 
 
+class Cell:
+
+    def __init__(self, xlo, xhi, ylo, yhi, zlo, zhi, xy=0.0, xz=0.0, yz=0.0):
+        try:
+            # cell min&max along x-axis
+            self.xlo = float(xlo)
+            self.xhi = float(xhi)
+            # cell min&max along y-axis
+            self.ylo = float(ylo)
+            self.yhi = float(yhi)
+            # cell min&max along z-axis
+            self.zlo = float(zlo)
+            self.zhi = float(zhi)
+            # tilted box
+            self.xy = float(xy)
+            self.xz = float(xz)
+            self.yz = float(yz)
+
+        except ValueError:
+            raise AssertionError("Unexpected value for Cell!")
+
+    def get_cell_dict(self):
+        """
+        return cell in format of dictionary
+        """
+        cell = dict()
+        cell['xlo xhi'] = [self.xlo, self.xhi]  # box min&max along x-axis
+        cell['ylo yhi'] = [self.ylo, self.yhi]  # box min&max along y-axis
+        cell['zlo zhi'] = [self.zlo, self.xhi]  # box min&max along z-axis
+        cell['xy xz yz'] = [self.xy, self.xz, self.yz]  # tilted box
+        return cell
+
+    def __str__(self):
+        out = ''
+        for key, value in self.get_cell_dict().items():
+            for num in value:
+                out += str(num) + ' '
+            out += key + '\n'
+        return out
+
+
+
+
 # ==========================================================================================
 
 if __name__ == '__main__':
@@ -211,34 +260,34 @@ if __name__ == '__main__':
     atoms_block = MolFrameBlock.make('Atoms')
     atoms_block.add(atom1)
     atoms_block.add(atom2)
-    print (type(atoms_block))
     print (atoms_block)
 
-    # bond1 = Bond(bid=1, typ=1, aid_i=1, aid_j=2)
-    # bond2 = Bond(bid=2, typ=1, aid_i=1, aid_j=2)
-    # bonds_block = BondsBlock()
-    # bonds_block.add(bond1)
-    # bonds_block.add(bond2)
-    # print (bonds_block)
-    #
-    # angle1 = Angle(anid=1, typ=1, aid_i=2, aid_j=4, aid_k=5, label=' # water angle')
-    # angles_block = AnglesBlock()
-    # angles_block.add(angle1)
-    # print (angles_block)
-    #
-    # dihedral1 = Dihedral(did=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
-    # dihedral_block = DihedralsBlock()
-    # dihedral_block.add(dihedral1)
-    # print (dihedral_block)
-    #
-    # improper1 = Improper(iid=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
-    # improper_block = ImpropersBlock()
-    # improper_block.add(improper1)
-    # print (improper_block)
+    bond1 = Bond(bid=1, typ=1, aid_i=1, aid_j=2)
+    bond2 = Bond(bid=2, typ=1, aid_i=1, aid_j=2)
+    bonds_block = Bonds()
+    bonds_block.add(bond1)
+    bonds_block.add(bond2)
+    print (bonds_block)
 
-    # Atoms = MolFrameBlock('Atoms')
-    # Atoms.add()
-    # Atoms.data()
-    # Atoms
+    angle1 = Angle(anid=1, typ=1, aid_i=2, aid_j=4, aid_k=5, label=' # water angle')
+    angles_block = Angles()
+    angles_block.add(angle1)
+    print (angles_block)
+
+    dihedral1 = Dihedral(did=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
+    dihedral_block = Dihedrals()
+    dihedral_block.add(dihedral1)
+    print (dihedral_block)
+
+    improper1 = Improper(iid=1, typ=1, aid_i=1, aid_j=2, aid_k=3, aid_l=4)
+    improper_block = Impropers()
+    improper_block.add(improper1)
+    print (improper_block)
+
+    cell1 = Cell(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
+    box_block = Box() #MolFrameBlock.make("Box")
+    box_block.add(cell1)
+    print (box_block)
+
 
 
