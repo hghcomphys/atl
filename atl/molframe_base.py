@@ -69,7 +69,7 @@ class BoxSection(MolFrameSection):
         self.items = None
 
     def add(self, section):
-        if isinstance(section, Cell):
+        if isinstance(section, Box):
             self.sections = section  # always len(items)=1 (replacing)
         else:
             raise AssertionError("Unexpected type for Box!")
@@ -202,17 +202,17 @@ class Improper:
         return out
 
 
-class Cell:
+class Box:
 
     def __init__(self, xlo, xhi, ylo, yhi, zlo, zhi, xy=0.0, xz=0.0, yz=0.0):
         try:
-            # cell min&max along x-axis
+            # box min&max along x-axis
             self.xlo = float(xlo)
             self.xhi = float(xhi)
-            # cell min&max along y-axis
+            # box min&max along y-axis
             self.ylo = float(ylo)
             self.yhi = float(yhi)
-            # cell min&max along z-axis
+            # box min&max along z-axis
             self.zlo = float(zlo)
             self.zhi = float(zhi)
             # tilted box
@@ -221,22 +221,22 @@ class Cell:
             self.yz = float(yz)
 
         except ValueError:
-            raise AssertionError("Unexpected value for Cell!")
+            raise AssertionError("Unexpected value for Box!")
 
-    def get_cell_dict(self):
+    def get_box_dict(self):
         """
-        return cell in format of dictionary
+        return box in format of dictionary
         """
-        cell = dict()
-        cell['xlo xhi'] = [self.xlo, self.xhi]  # box min&max along x-axis
-        cell['ylo yhi'] = [self.ylo, self.yhi]  # box min&max along y-axis
-        cell['zlo zhi'] = [self.zlo, self.xhi]  # box min&max along z-axis
-        cell['xy xz yz'] = [self.xy, self.xz, self.yz]  # tilted box
-        return cell
+        box = dict()
+        box['xlo xhi'] = [self.xlo, self.xhi]  # box min&max along x-axis
+        box['ylo yhi'] = [self.ylo, self.yhi]  # box min&max along y-axis
+        box['zlo zhi'] = [self.zlo, self.xhi]  # box min&max along z-axis
+        box['xy xz yz'] = [self.xy, self.xz, self.yz]  # tilted box
+        return box
 
     def __str__(self):
         out = ''
-        for key, value in self.get_cell_dict().items():
+        for key, value in self.get_box_dict().items():
             for num in value:
                 out += str(num) + ' '
             out += key + '\n'
@@ -276,7 +276,7 @@ if __name__ == '__main__':
     improper_block.add(improper1)
     print (improper_block)
 
-    cell1 = Cell(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
+    box1 = Box(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
     box_block = MolFrameSection.make("BoxSection")
-    box_block.add(cell1)
+    box_block.add(box1)
     print (box_block)
