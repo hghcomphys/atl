@@ -78,20 +78,26 @@ class BoxSection(MolFrameSection):
         if isinstance(section, Box):
             self.sections = section  # always len(items)=1 (replacing)
         else:
-            raise AssertionError("Unexpected type for Box!")
+            raise AssertionError("Unexpected type for BoxSection!")
 
     def __str__(self):
         return str(self.sections)
 
 
+class MolTypeSection(MolFrameSection):
 
+    def __init__(self):
+        MolFrameSection.__init__(self, 'MolType')
+        self.items = None
 
-#
-#
-# class Types(MolFrameSection):
-#
-#     def get_data(self):
-#         return "Masses data"
+    def add(self, section):
+        if isinstance(section, MolType):
+            self.sections = section  # always len(items)=1 (replacing)
+        else:
+            raise AssertionError("Unexpected type for MolTypeSection!")
+
+    def __str__(self):
+        return str(self.sections)
 
 
 class Atom:
@@ -228,42 +234,45 @@ class Box:
 
     def __init__(self, xlo, xhi, ylo, yhi, zlo, zhi, xy=0.0, xz=0.0, yz=0.0):
         try:
-            # box min&max along x-axis
-            self.xlo = float(xlo)
-            self.xhi = float(xhi)
-            # box min&max along y-axis
-            self.ylo = float(ylo)
-            self.yhi = float(yhi)
-            # box min&max along z-axis
-            self.zlo = float(zlo)
-            self.zhi = float(zhi)
-            # tilted box
-            self.xy = float(xy)
-            self.xz = float(xz)
-            self.yz = float(yz)
+            box_dict = dict()
+            box_dict['xlo xhi'] = [float(xlo), float(xhi)]  # box min&max along x-axis
+            box_dict['ylo yhi'] = [float(ylo), float(yhi)]  # box min&max along y-axis
+            box_dict['zlo zhi'] = [float(zlo), float(zhi)]  # box min&max along z-axis
+            box_dict['xy xz yz'] = [float(xy), float(xz), float(yz)]  # tilted box
+            self.box_dict = box_dict
 
         except ValueError:
             raise AssertionError("Unexpected value for Box!")
 
-    def get_box_dict(self):
-        """
-        return box in format of dictionary
-        """
-        box = dict()
-        box['xlo xhi'] = [self.xlo, self.xhi]  # box min&max along x-axis
-        box['ylo yhi'] = [self.ylo, self.yhi]  # box min&max along y-axis
-        box['zlo zhi'] = [self.zlo, self.xhi]  # box min&max along z-axis
-        box['xy xz yz'] = [self.xy, self.xz, self.yz]  # tilted box
-        return box
-
     def __str__(self):
         out = ''
-        for key, value in self.get_box_dict().items():
+        for key, value in self.box_dict.items():
             for num in value:
                 out += str(num) + ' '
             out += key + '\n'
         return out
 
+class MolType:
+
+    def __init__(self, atoms=[0, 0], angles=[0, 0], bonds=[0, 0], dihedrals=[0, 0], impropers=[0, 0]):
+        try:
+            moltype_dict = dict()
+            for add_text, index in [('s', 0), (' types', 1)]:  # loop over numbers & types
+                moltype_dict['atom'+add_text] = int_ge_zero(atoms[index])
+                moltype_dict['bond'+add_text] = int_ge_zero(bonds[index])
+                moltype_dict['angle'+add_text] = int_ge_zero(angles[index])
+                moltype_dict['dihedral'+add_text] = int_ge_zero(dihedrals[index])
+                moltype_dict['improper'+add_text] = int_ge_zero(impropers[index])
+            self.mtype_dict = moltype_dict
+
+        except (ValueError, IndexError):
+            raise AssertionError("Unexpected value for MolType!")
+
+    def __str__(self):
+        out = ''
+        for key, value in self.mtype_dict.items():
+                out += str(value) + ' ' + key + '\n'
+        return out
 
 # ==========================================================================================
 
@@ -310,3 +319,8 @@ if __name__ == '__main__':
     masses_block.add(mass1)
     masses_block.add(mass2)
     print (masses_block)
+
+    moltype1 =  MolType(atoms=[100, 2], bonds=[21, 1])
+    moltype_block = MolTypeSection()
+    moltype_block.add(moltype1)
+    print (moltype_block)
