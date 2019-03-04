@@ -9,6 +9,17 @@ def int_ge_zero(n):
     """
     int_n = int(n)
     if int_n < 0:
-        AssertionError("Unexpected negative value!")
+        AssertionError("Unexpected negative value (int)!")
     else:
         return int_n
+
+
+def float_ge_zero(x):
+    """
+    Assertion error for unexpected negative value of float input argument.
+    """
+    float_x = float(x)
+    if float_x < 0.0:
+        AssertionError("Unexpected negative value (float)!")
+    else:
+        return float_x
