@@ -4,7 +4,7 @@ Defining molecular sections meta-class and subsequent classes
 """
 
 from abc import	ABCMeta, abstractmethod
-from atl.error import int_ge_zero
+from atl.error import int_ge_zero, float_ge_zero
 
 
 class MolFrameSection:
@@ -62,6 +62,12 @@ class ImpropersSection(MolFrameSection):
         MolFrameSection.__init__(self, "Impropers")
 
 
+class MassesSection(MolFrameSection):
+
+    def __init__(self):
+        MolFrameSection.__init__(self, 'Masses')
+
+
 class BoxSection(MolFrameSection):
 
     def __init__(self):
@@ -78,10 +84,8 @@ class BoxSection(MolFrameSection):
         return str(self.sections)
 
 
-# class Masses(MolFrameSection):
-#
-#     def get_data(self):
-#         return "Masses data"
+
+
 #
 #
 # class Types(MolFrameSection):
@@ -202,6 +206,24 @@ class Improper:
         return out
 
 
+class Mass:
+
+    def __init__(self, msid, mass, label=''):
+        try:
+            self.msid = int_ge_zero(msid)    # mass id
+            self.mass = float_ge_zero(mass)  # mass value
+            self.label = str(label)          # mass label
+
+        except ValueError:
+            raise AssertionError("Unexpected value for Mass!")
+
+    def __str__(self):
+        out = ''
+        for attribute in [self.msid, self.mass, self.label]:
+            out += str(attribute) + ' '
+        return out
+
+
 class Box:
 
     def __init__(self, xlo, xhi, ylo, yhi, zlo, zhi, xy=0.0, xz=0.0, yz=0.0):
@@ -242,6 +264,7 @@ class Box:
             out += key + '\n'
         return out
 
+
 # ==========================================================================================
 
 
@@ -280,3 +303,10 @@ if __name__ == '__main__':
     box_block = MolFrameSection.make("BoxSection")
     box_block.add(box1)
     print (box_block)
+
+    mass1 = Mass(msid=1, mass=2.3, label='O')
+    mass2 = Mass(msid=2, mass=0.33, label='H')
+    masses_block = MassesSection()
+    masses_block.add(mass1)
+    masses_block.add(mass2)
+    print (masses_block)
