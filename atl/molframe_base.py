@@ -12,19 +12,19 @@ class MolecularFrameSection:
     Defining base class for each molecular frame section.
     """
     def __init__(self, name):
-        self.sections = []
+        self.items = []
         self.name = name
 
-    def add(self, section):
-        self.sections.append(section)
+    def add(self, item):
+        self.items.append(item)
 
     def get(self):
-        return self.sections
+        return self.items
 
     def __str__(self):
         out = self.name + "\n\n"
-        for section in self.sections:
-            out += str(section) + '\n'
+        for item in self.items:
+            out += str(item) + '\n'
         return out
 
     # static method, this is implicitly a class method
@@ -74,9 +74,9 @@ class BoxSection(MolecularFrameSection):
         MolecularFrameSection.__init__(self, 'Box')
         self.items = None
 
-    def add(self, section):
-        if isinstance(section, Box):
-            self.sections = section  # always len(items)=1 (replacing)
+    def add(self, item):
+        if isinstance(item, Box):
+            self.sections = item  # always len(items)=1 (replacing)
         else:
             raise AssertionError("Unexpected type for BoxSection!")
 
@@ -90,9 +90,9 @@ class MolTypeSection(MolecularFrameSection):
         MolecularFrameSection.__init__(self, 'MolType')
         self.items = None
 
-    def add(self, section):
-        if isinstance(section, MolType):
-            self.sections = section  # always len(items)=1 (replacing)
+    def add(self, item):
+        if isinstance(item, MolType):
+            self.sections = item  # always len(items)=1 (replacing)
         else:
             raise AssertionError("Unexpected type for MolTypeSection!")
 
