@@ -25,7 +25,7 @@ class FormatterXYZ(Formatter):
 
     def write(self, file_name):
         with open(file_name, "w") as fp:
-            atoms = self.molecular_frame.sections['Atoms'].items
-            fp.write('%d\n\n'%len(atoms))
-            for atom in atoms:
+            atoms_section = self.molecular_frame.sections['Atoms']
+            fp.write('%d\n\n'%atoms_section.get_atoms_number())
+            for atom in atoms_section.get_list():
                 fp.write("%s %f %f %f\n"%(atom.label, atom.x, atom.y, atom.z))

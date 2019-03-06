@@ -39,5 +39,5 @@ if __name__ == '__main__':
     mf = MolecularFrame()
     mf.import_from(crys_supcell, package_name="ASE")
     # print(mf)
-    mf.write('test.xyz', format="xyz")
+    mf.write('/home/hossein/Desktop/test.xyz', format="xyz")
 

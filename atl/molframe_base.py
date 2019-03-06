@@ -18,7 +18,7 @@ class MolecularFrameSection:
     def add(self, item):
         self.items.append(item)
 
-    def get(self):
+    def get_list(self):
         return self.items
 
     def __str__(self):
@@ -41,6 +41,9 @@ class AtomsSection(MolecularFrameSection):
 
     def __init__(self):
         MolecularFrameSection.__init__(self, "Atoms")
+
+    def get_atoms_number(self):
+        return len(self.items)
 
 
 class BondsSection(MolecularFrameSection):
