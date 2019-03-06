@@ -2,14 +2,14 @@
 As an adaptor for ASE module
 """
 
-from molframe_base import *
+from mf_section import *
 
 
 class Adaptor:
 
     def __init__(self, package):
         self.package = package  # external package object including structural info
-        self.sections = dict()  # dictionary of molecular frame sections
+        self.sections = dict()  # dictionary of molecular sections
 
     # static method, this is implicitly a class method
     def make(self, package_name):
@@ -24,7 +24,7 @@ class Adaptor:
 
 class AdaptorASE(Adaptor):
 
-    def get_molecular_frame_sections(self):
+    def get_molecular_sections(self):
 
         # Box Section
         box_sections = BoxSection()

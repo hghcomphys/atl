@@ -2,8 +2,6 @@
 handling input/output methods in molecular frame
 """
 
-from abc import abstractmethod
-
 
 class Formatter:
 
@@ -25,7 +23,7 @@ class FormatterXYZ(Formatter):
 
     def write(self, file_name):
         with open(file_name, "w") as fp:
-            atoms_section = self.molecular_frame.sections['Atoms']
+            atoms_section = self.molecular_frame.get_molecular_section('Atoms')
             fp.write('%d\n\n'%atoms_section.get_atoms_number())
             for atom in atoms_section.get_list():
                 fp.write("%s %f %f %f\n"%(atom.label, atom.x, atom.y, atom.z))

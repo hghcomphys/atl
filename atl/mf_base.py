@@ -3,6 +3,9 @@ Here we define different molecular bases used in molecular frame sections includ
 Atom, Bond, Angle, Dihedral, Impropers, Box, Mass, and MolType classes.
 """
 
+from mf_error import int_ge_zero, float_ge_zero
+
+
 class Atom:
 
     def __init__(self, atom_id, molecule_id, atom_type, q, x, y, z, imx=0, imy=0, imz=0, label=''):
@@ -154,6 +157,7 @@ class Box:
                 out += str(num) + ' '
             out += key + '\n'
         return out
+
 
 class MolType:
 
