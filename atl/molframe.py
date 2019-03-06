@@ -2,7 +2,7 @@
 Molecular frame class
 """
 
-from molframe_ase import AdaptorASE
+from molframe_ase import Adaptor
 from molframe_io import *
 
 
@@ -17,8 +17,8 @@ class MolecularFrame:
             out += str(value) + '\n'
         return out
 
-    def import_ase(self, ase_boject):
-        self.sections = AdaptorASE(ase_boject).get_molecular_frame_sections()
+    def import_from(self, package_object, package_name):
+        self.sections = Adaptor(package_object).make(package_name).get_molecular_frame_sections()
 
     def write(self, file_name, format='xyz'):
         Formatter(self).make(format.upper()).write(file_name)
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     crys_supcell = make_supercell(crys, P)
 
     mf = MolecularFrame()
-    mf.import_ase(crys_supcell)
+    mf.import_from(crys_supcell, package_name="ASE")
     # print(mf)
-    mf.write('/home/hossein/Desktop/test.xyz')
+    mf.write('test.xyz', format="xyz")
 

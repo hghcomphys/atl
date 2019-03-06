@@ -4,7 +4,7 @@ Defining molecular sections meta-class and subsequent classes
 """
 
 # from abc import	ABCMeta, abstractmethod
-from atl.error import int_ge_zero, float_ge_zero
+from error import int_ge_zero, float_ge_zero
 
 
 class MolecularFrameSection:
@@ -38,6 +38,7 @@ class MolecularFrameSection:
 
 
 class AtomsSection(MolecularFrameSection):
+
     def __init__(self):
         MolecularFrameSection.__init__(self, "Atoms")
 
