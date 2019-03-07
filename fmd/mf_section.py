@@ -18,6 +18,10 @@ class MolecularSection:
     def add(self, item):
         self.items.append(item)
 
+    def add_list(self, items):
+        for item in items:
+            self.items.append(item)
+
     def get_list(self):
         return self.items
 

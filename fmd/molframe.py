@@ -36,8 +36,16 @@ class MolecularFrame:
             out += str(value) + '\n'
         return out
 
-    def import_from(self, package_object, package_name):
-        self.molecular_sections = Adaptor(package_object).make(package_name).get_molecular_sections()
+    def _import(self, package_object, package_name):
+        self.molecular_sections = Adaptor(package_object).make(package_name).get_molecular_sections() # direct assignment !!!
+        return self
+
+    def _export(self):
+        pass
+
+    def read(self, file_name, file_format='xyz'):
+        self.set_molecular_section = Formatter(self).make(file_format.upper()).read(file_name) # direct assignment !!!
+        return self
 
     def write(self, file_name, file_format='xyz'):
         Formatter(self).make(file_format.upper()).write(file_name)
@@ -56,9 +64,10 @@ if __name__ == '__main__':
     crys_supcell = make_supercell(crys, P)
 
     mf = MolecularFrame()
-    mf.import_from(crys_supcell, package_name="ASE")
-    # print(mf)
-    mf.write('/home/hossein/Desktop/test.xyz', file_format="xyz")
+    mf._import(crys_supcell, package_name="ASE")
 
+    file_name = '/home/hossein/Desktop/test.xyz'
+    mf.write(file_name)
+    print(MolecularFrame().read(file_name))
     #print(mf.get_molecular_section("Atoms"))
 
