@@ -7,13 +7,13 @@ from mf_section import *
 class Formatter:
 
     def __init__(self, molecular_frame):
-        self.molecular_frame = molecular_frame
+        self._molecular_frame = molecular_frame
 
     # static method, this is implicitly a class method
     def make(self, format):
         try:
             # subclass name has to start with "Formatter"!
-            formatter = eval("Formatter"+str(format))(self.molecular_frame)
+            formatter = eval("Formatter"+str(format))(self._molecular_frame)
 
         except (SyntaxError, NameError, TypeError):
             raise AssertionError("Unexpected type for Formatter!")
@@ -24,10 +24,10 @@ class FormatterXYZ(Formatter):
 
     def write(self, file_name):
         with open(file_name, "w") as out_file:
-            atoms_section = self.molecular_frame.get_molecular_section('Atoms')
+            atoms_section = self._molecular_frame.get_molecular_section('Atoms')
             out_file.write('%d\n\n'%atoms_section.get_atoms_number())
-            for atom in atoms_section.get_list():
-                out_file.write("%s %f %f %f\n"%(atom.label, atom.x, atom.y, atom.z))
+            for atom in atoms_section.get_atoms():
+                out_file.write("%s %f %f %f\n"%(atom._label, atom._x, atom._y, atom._z))
 
     def read(self, file_name, frame=-1):
         """
@@ -59,9 +59,11 @@ class FormatterXYZ(Formatter):
                 if (frame > 0) and (n_frame >= frame):
                     break
 
-        self.molecular_frame.set_molecular_section(AtomsSection().add_list(atoms))
+        atom_section = AtomsSection()
+        atom_section.add_atoms(atoms)
+        self._molecular_frame.set_molecular_section(atom_section)
 
-        # returning instance of  atomic section
-        return self.molecular_frame.molecular_sections
+        # returning molecular section
+        return self._molecular_frame.get_molecular_sections()
 
 
