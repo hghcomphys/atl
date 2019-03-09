@@ -11,46 +11,36 @@ from copy import deepcopy
 class MolecularFrame:
 
     def __init__(self, name='Molecular Frame'):
-        self._molecular_sections = dict()  # setting empty dictionary for molecular sections field
-        self._name = str(name)  # giving a name for molecular frame (info field)
+        self.__molecular_sections = dict()  # initialize molecular_sections
+        self.__name = str(name)  # assign a name for molecular frame instance
 
     def __str__(self):
-        """
-        This method defines string conversion for molecular frame.
-        """
-        out = self._name + '\n'
-        for mol_sec in self._molecular_sections.values():
+        """A method that defines string conversion for a molecular frame instance."""
+        out = self.__name + '\n'
+        for mol_sec in self.__molecular_sections.values():
             out += str(mol_sec) + '\n'
         return out
 
     def get_molecular_section(self, section_name):
-        """
-        This method returns the molecular sections by specifying the section name.
-        """
-        if section_name in self._molecular_sections.keys():
-            return self._molecular_sections[section_name]
+        """A method that returns an specified molecular section by giving its name (key)."""
+        if section_name not in self.__molecular_sections.keys():
+            return self.__molecular_sections[section_name]
         else:
             AssertionError("Cannot find section name for %s!" % self.get_molecular_section.__name__)
 
     def get_molecular_sections(self):
-        """
-        This method returns all molecular sections in form of dictionary.
-        """
-        return self._molecular_sections
+        """This method returns all molecular sections in form of a dictionary."""
+        return self.__molecular_sections
 
     def set_molecular_section(self, molecular_section):
-        """
-        This method sets the specified molecular section.
-        """
+        """This method sets a specified molecular section into molecular frame."""
         if isinstance(molecular_section, MolecularSection):
-            self._molecular_sections[molecular_section.get_name()] = molecular_section
+            self.__molecular_sections[molecular_section.get_name()] = molecular_section
         else:
             AssertionError("Unexpected molecular section for %s!" % self.__class__.__name__)
 
     def set_molecular_sections(self, molecular_sections):
-        """
-        This method sets molecular sections in form of dictionary.
-        """
+        """This method sets input molecular sections in form of a dictionary."""
         if isinstance(molecular_sections, dict):
             for mol_sec in molecular_sections.values():
                 self.set_molecular_section(mol_sec)
@@ -58,56 +48,45 @@ class MolecularFrame:
             AssertionError("Expected dict input argument for %s!" % self.set_molecular_sections.__name__)
 
     def import_from(self, package_instance, package_name):
-        """
-        This method imports molecular frame from an external module such as ASE.
-        """
-        tmp = Adaptor(package_instance).make(package_name).get_molecular_sections()
-        self.set_molecular_sections(tmp)
+        """This method imports molecular frame from an external module such as ASE."""
+        self.set_molecular_sections(Adaptor(package_instance).make(package_name).get_molecular_sections())
         return self
 
     def read(self, file_name, file_format='xyz'):
-        """
-        This method reads a file with specified format into molecular frame.
-        """
+        """This method reads a file with specified format into molecular frame."""
         self.set_molecular_sections(Formatter(self).make(file_format.upper()).read(file_name))
         return self
 
     def write(self, file_name, file_format='xyz'):
-        """
-        This method writes molecular frame into a file with specified format.
-        """
+        """A method that writes molecular frame into a file with given format."""
         Formatter(self).make(file_format.upper()).write(file_name)
 
     def get_name(self):
-        return self._name
+        """return molecular frame name"""
+        return self.__name
 
     def export_to(self):
+        """This method exports molecular frame as an specified external package instance such as ASE."""
         pass
 
     def __eq__(self, other):
-        """
-        This method defines equal '=' operator between two molecular frame instances.
-        """
+        """This method defines equal '=' operator between two molecular frame instances."""
         if isinstance(other, MolecularFrame):
-            self._name = other.get_name()
-            self._molecular_sections = deepcopy(other.get_molecular_sections())
+            self.__name = other.get_name()
+            self.__molecular_sections = deepcopy(other.get_molecular_sections())
             return self
         else:
             AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
 
     def __add__(self, other):
-        """
-        This method defines '+' between molecular frame instances.
-        """
+        """This method defines '+' between molecular frame instances."""
         if isinstance(other, MolecularFrame):
             new_mf = MolecularFrame(self.get_name() + ' + ' + other.get_name())
-            for mol_sec in ["Atoms"]: #, "Box"]:
+            for mol_sec in ["Atoms"]:  # DOTO: for now it only works for Atoms & Box sections!
                 new_mf.set_molecular_section(self.get_molecular_section(mol_sec) + other.get_molecular_section(mol_sec))
             return new_mf
         else:
             AssertionError("Expected %s for '+' operator!" % self.__class__.__name__)
-
-
 
 
 
