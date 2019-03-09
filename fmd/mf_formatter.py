@@ -44,10 +44,10 @@ class FormatterXYZ(Formatter):
                 next(in_file)  # skip one line
                 n_frame += 1  # increment frame
                 if n_frame >= frame:
-                    for i in range(n_atoms):
+                    for index in range(n_atoms):
                         line = next(in_file)
                         line = line.rstrip("/n").split()
-                        atom = Atom(atom_id=0, molecule_id=0, atom_type=0, q=0.0, x=float(line[1]),
+                        atom = Atom(atom_id=index+1, molecule_id=0, atom_type=0, q=0.0, x=float(line[1]),
                                     y=float(line[2]), z=float(line[3]), label=line[0])
                         atoms.append(atom)
                 else:
