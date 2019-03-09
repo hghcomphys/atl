@@ -5,6 +5,7 @@ Defining molecular sections meta-class and subsequent classes
 
 # from abc import	ABCMeta, abstractmethod
 from mf_base import *
+from copy import deepcopy
 
 
 class MolecularSection:
@@ -75,6 +76,29 @@ class AtomsSection(MolecularSection):
 
     def get_atoms_number(self):
         return len(self._items)
+
+    def __eq__(self, other):
+        """
+        This method defines equal '=' operator between two atoms section instances.
+        """
+        if isinstance(other, AtomsSection):
+            self._name = other.get_name()
+            self._items = deepcopy(other.get_atoms())
+            return self
+        else:
+            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
+
+    def __add__(self, other):
+        """
+               This method defines '+' between atoms section instances.
+        """
+        if isinstance(other, AtomsSection):
+            new_atom_section = AtomsSection()
+            new_atom_section.add_atoms(deepcopy(self.get_atoms()))
+            new_atom_section.add_atoms(deepcopy(other.get_atoms()))
+            return new_atom_section
+        else:
+            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
 
 
 class BoxSection(MolecularSection):
