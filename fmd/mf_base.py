@@ -3,7 +3,8 @@ Here we define different molecular bases used in molecular frame sections includ
 Atom, Bond, Angle, Dihedral, Impropers, Box, Mass, and MolType classes.
 """
 
-from mf_error import int_ge_zero, float_ge_zero
+from mf_error import int_ge_zero
+# from mf_error import float_ge_zero
 
 
 class Atom:
@@ -37,17 +38,18 @@ class Box:
 
     def __init__(self, xlo, xhi, ylo, yhi, zlo, zhi, xy=0.0, xz=0.0, yz=0.0):
         try:
-            box_dict = dict()
+            box_dict = dict()  # an empty dictionary for all box data including lengths, angles, etc
             box_dict['xlo xhi'] = [float(xlo), float(xhi)]  # box min&max along x-axis
             box_dict['ylo yhi'] = [float(ylo), float(yhi)]  # box min&max along y-axis
             box_dict['zlo zhi'] = [float(zlo), float(zhi)]  # box min&max along z-axis
             box_dict['xy xz yz'] = [float(xy), float(xz), float(yz)]  # tilted box
-            self._box_dict = box_dict
+            self._box_dict = box_dict  # assign it to a private box field
 
         except ValueError:
             raise AssertionError("Unexpected value for %s!" % self.__class__.__name__)
 
     def __str__(self):
+        """string conversion of box section"""
         out = ''
         for key, value in self._box_dict.items():
             for num in value:
@@ -55,6 +57,24 @@ class Box:
             out += key + '\n'
         return out
 
+    def get_lx(self):
+        """It returns box length along x-axis"""
+        l = self._box_dict['xlo xhi']
+        return l[1]-l[0]
+
+    def get_ly(self):
+        """It returns box length along y-axis"""
+        l = self._box_dict['ylo yhi']
+        return l[1]-l[0]
+
+    def get_lz(self):
+        """It returns box length along z-axis"""
+        l = self._box_dict['zlo zhi']
+        return l[1]-l[0]
+
+    def get_volume(self):
+        """This method returns box volume (only valid for orthogonal box)"""
+        return self.get_lx()*self.get_ly()*self.get_lz()
 
 # class Bond:
 #

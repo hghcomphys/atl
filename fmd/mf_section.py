@@ -13,30 +13,57 @@ class MolecularSection:
     Defining base class for each molecular frame section such as AtomSection.
     """
     def __init__(self, name):
-        self._items = []
-        self._name = str(name)
+        self._items = []  # empty list of items
+        self._name = str(name)  # setting molecular section name
 
     def add(self, item):
+        """
+        This method adds an item to molecular section.
+        """
         self._items.append(item)
 
     def add_items(self, items):
+        """
+        This methods adds a list of items to molecular section.
+        """
         for item in items:
             self.add(items)
 
     def get_items(self):
+        """
+        This method returns list of items within molecular section.
+        """
         return self._items
 
     def get_items_number(self):
+        """
+        This method returns number of items within the molecular section.
+        """
         return len(self._items)
 
     def get_name(self):
+        """This method returns given name of molecular section."""
         return self._name
 
     def __str__(self):
+        """
+        This method defines string conversion of a molecular section instance.
+        """
         out = self._name + "\n\n"
         for item in self._items:
             out += str(item) + '\n'
         return out
+
+    def __eq__(self, other):
+        """
+        This method defines equal '=' operator between two molecular section instances.
+        """
+        if isinstance(other, AtomsSection):
+            self._name = other.get_name()
+            self._items = deepcopy(other.get_items())
+            return self
+        else:
+            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
 
     def make(self, section):
         """
@@ -56,7 +83,6 @@ class AtomsSection(MolecularSection):
     """
     This class contains particularly list of Atom class with relevant methods for the atoms.
     """
-
     def __init__(self):
         MolecularSection.__init__(self, "Atoms")
 
@@ -77,20 +103,9 @@ class AtomsSection(MolecularSection):
     def get_atoms_number(self):
         return len(self._items)
 
-    def __eq__(self, other):
-        """
-        This method defines equal '=' operator between two atoms section instances.
-        """
-        if isinstance(other, AtomsSection):
-            self._name = other.get_name()
-            self._items = deepcopy(other.get_atoms())
-            return self
-        else:
-            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
-
     def __add__(self, other):
         """
-               This method defines '+' between atoms section instances.
+        This method defines '+' between atoms section instances.
         """
         if isinstance(other, AtomsSection):
             new_atom_section = AtomsSection()
@@ -117,6 +132,27 @@ class BoxSection(MolecularSection):
 
     def __str__(self):
         return str(self._items)
+
+    def get_volume(self):
+        """
+        This method calculates volume of the box.
+        """
+        return self._items.get_volume()
+
+    def __add__(self, other):
+        """
+        This method defines '+' between atoms section instances.
+        """
+        if isinstance(other, BoxSection):
+            new_section = BoxSection()
+            if self.get_volume() >= other.get_volume():
+                new_section = self
+            else:
+                new_section = other
+            return new_section
+        else:
+            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
+
 
 
 # class BondsSection(MolecularSection):

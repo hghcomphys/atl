@@ -101,7 +101,7 @@ class MolecularFrame:
         """
         if isinstance(other, MolecularFrame):
             new_mf = MolecularFrame(self.get_name() + ' + ' + other.get_name())
-            for mol_sec in ["Atoms"]:
+            for mol_sec in ["Atoms"]: #, "Box"]:
                 new_mf.set_molecular_section(self.get_molecular_section(mol_sec) + other.get_molecular_section(mol_sec))
             return new_mf
         else:
@@ -141,4 +141,5 @@ if __name__ == '__main__':
     print(mf3.get_name())
     print(mf3.get_molecular_section("Atoms").get_atoms_number())
     mf3.write(file_name)
+    print (mf3.get_molecular_section("Atoms"))
 
