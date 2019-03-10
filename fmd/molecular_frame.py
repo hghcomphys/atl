@@ -1,25 +1,27 @@
 """ Molecular Frame
 
-Molecular frame contains collection of atoms in form of molecular topology and simulation box info.
+Molecular frame contains collection of atoms in form of molecular topology and simulation box data.
 It is described in a dictionary of molecular sections that basically includes list of Atom, Box, Masses, etc.
 It can import (export) molecular structure from (to) external packages (i.e. ASE), having methods
 to read & write files in desired format (such as .xyz), selecting specific group of atoms,
 and methods for integrating two molecular frame instances.
 """
 
+from mf_atom import AtomsSection
 from mf_section import MolecularSection
 from mf_ase import Adaptor
-from mf_formatter import *
+from mf_formatter import Formatter
 from copy import deepcopy
 
 
 class MolecularFrame:
+    """Molecular Frame"""
 
     def __init__(self, name='Molecular Frame', molecular_sections=None):
         """makes a new instance of molecular frame"""
-        self.set_name(name)  # assign a given name for molecular frame
+        self.name = name  # assign a given name for molecular frame
         self.__molecular_sections = dict()  # initialize molecular sections as a dictionary
-        # set given molecular sections
+        # initialize molecular sections
         if isinstance(molecular_sections, MolecularSection):
             self.set_molecular_section(molecular_sections)
         if isinstance(molecular_sections, dict):
@@ -29,6 +31,10 @@ class MolecularFrame:
     def name(self):
         """returns molecular frame name"""
         return self.__name
+
+    @name.setter
+    def name(self, name):
+        self.__name = str(name)
 
     @property
     def molecular_sections(self):
@@ -42,14 +48,10 @@ class MolecularFrame:
             out += str(mol_sec) + '\n'
         return out
 
-    def set_name(self, name):
-        """sets name for molecular frame"""
-        self.__name = str(name)
-
     def get_molecular_section(self, section_name):
         """A method that returns an specified molecular section by giving its name (key)."""
         if section_name not in self.molecular_sections.keys():
-            raise AssertionError(f"Cannot find {section_name}Section for %s!" % self.get_molecular_section.__name__)
+            raise AssertionError("Cannot find section name for %s!" % self.get_molecular_section.__name__)
         return self.__molecular_sections[section_name]
 
     def set_molecular_section(self, molecular_section):
@@ -86,7 +88,7 @@ class MolecularFrame:
         if not isinstance(other, MolecularFrame):
             raise AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
         # set name and molecular sections from 'other' instance
-        self.set_name(other.name)
+        self.name = other.name
         self.set_molecular_sections(deepcopy(other.molecular_sections))
         return self
 
@@ -109,7 +111,6 @@ class MolecularFrame:
         new_mf = MolecularFrame(self.name + '(%s)' % region_fn.__name__)
         # make a new atom section and select atoms base on region_fn
         atom_section = AtomsSection()
-        print (self.molecular_sections.keys())
         for atom in self.get_molecular_section("Atoms").atoms:
             if region_fn(atom.x, atom.y, atom.z):
                 atom_section.add(atom)
@@ -141,22 +142,22 @@ if __name__ == '__main__':
     # print (mf1)
 
     file_name = '/home/hossein/Desktop/test.xyz'
-    # mf1.write(file_name)
+    mf1.write(file_name)
 
-    # mf = MolecularFrame().read(file_name)
+    mf = MolecularFrame().read(file_name)
     # print(mf)
 
-    # mf2 = MolecularFrame()
-    # crys2 = bulk('Pt', 'fcc', a=8.6, orthorhombic=True)
-    # P = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) * 5
-    # crys_supcell2 = make_supercell(crys2, P)
-    # mf2.import_from(crys_supcell2, package_name="ASE")
+    mf2 = MolecularFrame()
+    crys2 = bulk('Pt', 'fcc', a=8.6, orthorhombic=True)
+    P = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) * 5
+    crys_supcell2 = make_supercell(crys2, P)
+    mf2.import_from(crys_supcell2, package_name="ASE")
     # print(mf2)
 
-    # mf3 = mf1 + mf2
-    # print(mf3.get_name())
+    mf3 = mf1 + mf2
+    # print(mf3.name)
     # print(mf3.get_molecular_section("Atoms").get_atoms_number())
-    # mf3.write(file_name)
+    mf3.write(file_name)
     # print (mf3.get_molecular_section("Atoms"))
 
     # mf4 = MolecularFrame('dasf')
@@ -175,8 +176,8 @@ if __name__ == '__main__':
 
     from mf_box import Box, BoxSection
     box1 = Box(xlo=0, xhi=10, ylo=0, yhi=10, zlo=0, zhi=10)
-    mf5 = MolecularFrame(name="box", molecular_sections=BoxSection().add(box1))
-    print (mf5)
+    mf5 = MolecularFrame(molecular_sections=BoxSection(box1))
+    # print (mf5)
 
 
 

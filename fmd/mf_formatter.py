@@ -1,20 +1,25 @@
-"""
-handling input/output methods in molecular frame
-"""
+""" IO formatter"""
 
-from mf_atom import AtomsSection
+from mf_atom import Atom, AtomsSection
 
 
 class Formatter:
+    """General Formatter"""
 
     def __init__(self, molecular_frame):
-        self._molecular_frame = molecular_frame
+        # TODO: handle TypeError for input argument
+        self.__formatter_molecular_frame = molecular_frame  # initialize formatter molecular frame
+
+    @property
+    def formatter_molecular_frame(self):
+        """returns formatter molecular frame"""
+        return self.__formatter_molecular_frame
 
     # static method, this is implicitly a class method
     def make(self, format):
         try:
             # subclass name has to start with "Formatter"!
-            formatter = eval("Formatter"+str(format))(self._molecular_frame)
+            formatter = eval("Formatter"+str(format))(self.formatter_molecular_frame)
 
         except (SyntaxError, NameError, TypeError):
             raise AssertionError("Unexpected type for Formatter!")
@@ -22,18 +27,18 @@ class Formatter:
 
 
 class FormatterXYZ(Formatter):
+    """XYZ formatter"""
 
     def write(self, file_name):
+        """A method that writes molecular frame into a given file in xyz format."""
         with open(file_name, "w") as out_file:
-            atoms_section = self._molecular_frame.get_molecular_section('Atoms')
+            atoms_section = self.formatter_molecular_frame.get_molecular_section('Atoms')
             out_file.write('%d\n\n'%atoms_section.get_atoms_number())
-            for atom in atoms_section.get_atoms():
+            for atom in atoms_section.atoms:
                 out_file.write("%s %f %f %f\n"%(atom.label, atom.x, atom.y, atom.z))
 
     def read(self, file_name, frame=-1):
-        """
-        This function reads specific frame of a *.xyz file and returns molecular frame
-        """
+        """A method that reads specific frame of a *.xyz file and returns molecular frame."""
         n_frame = 0  # initializing frame counter to zero
         atoms = []  # list of readed frames
         with open(file_name, 'r') as in_file:
@@ -62,9 +67,12 @@ class FormatterXYZ(Formatter):
 
         atom_section = AtomsSection()
         atom_section.add_atoms(atoms)
-        self._molecular_frame.set_molecular_section(atom_section)
+        self.formatter_molecular_frame.set_molecular_section(atom_section)
 
         # returning molecular section
-        return self._molecular_frame.get_molecular_sections()
+        return self.formatter_molecular_frame.molecular_sections
 
 
+if __name__ == '__main__':
+    # TODO: add tests here!
+    print ("No test!")

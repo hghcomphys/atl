@@ -1,13 +1,11 @@
-"""Box and BoxSection
-"""
+"""Box and BoxSection"""
 
 from mf_section import MolecularSection
 
 
 class Box:
-    """
-    Box class contains data for simulation box and can be used in box section as one type of molecular sections.
-    """
+    """Box class contains data for simulation box and can be used in box section as one type of molecular sections."""
+
     def __init__(self, xlo, xhi, ylo, yhi, zlo, zhi, xy=0.0, xz=0.0, yz=0.0):
         try:
             box_dict = dict()  # an empty dictionary for all box data including lengths, angles, etc
@@ -61,26 +59,31 @@ class Box:
     def get_volume(self):
         """This method returns box volume"""
         # TODO: only works for orthogonal box
-        return self.lx*self.ly*self.lz
+        return self.lx * self.ly * self.lz
 
 
 class BoxSection(MolecularSection):
-    """
-    This class contains particularly Box class with relevant methods for simulation box.
-    """
-    def __init__(self):
-        MolecularSection.__init__(self, 'Masses')
-        self.__box = self.items
+    """This class contains particularly Box class with relevant methods for simulation box."""
+
+    def __init__(self, box=None):
+        MolecularSection.__init__(self, 'Box')
+        # initialize box
+        if box is not None:
+            self.add(box)
 
     @property
     def box(self):
-        return self.__box
+        return self.__items
+
+    @box.setter
+    def box(self, box):
+        if not isinstance(box, Box):
+            raise AssertionError("Unexpected type for %s!" % self.__class__.__name__)
+        self.__items = box  # always len(items)=1 (replacing)
 
     def add(self, box):
         """sets box dict data in box section"""
-        if not isinstance(box, Box):
-            raise AssertionError("Unexpected type for %s!" % self.__class__.__name__)
-        self.__box = box  # always len(items)=1 (replacing)
+        self.box = box
         return self
 
     def __str__(self):
@@ -106,3 +109,9 @@ class BoxSection(MolecularSection):
             new_section = other
         return new_section
 
+
+if __name__ == '__main__':
+
+    box1 = Box(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
+    print (box1)
+    print (BoxSection(box1))

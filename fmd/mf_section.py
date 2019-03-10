@@ -1,16 +1,10 @@
-"""Defining molecular sections
-"""
+"""Defining molecular sections"""
 
-# from abc import	ABCMeta, abstractmethod
-# from mf_box import Box
-# from mf_atom import Atom
 from copy import deepcopy
 
 
 class MolecularSection:
-    """
-    Defining base class for each molecular frame section such as AtomSection.
-    """
+    """Defining base class for each molecular frame section such as AtomSection."""
     def __init__(self, name):
         self.__name = str(name)  # setting molecular section name
         self.__items = []  # empty list of items
@@ -55,19 +49,6 @@ class MolecularSection:
         self.__name = other.name
         self.__items = deepcopy(other.items)
         return self
-
-    # def make(self, section):
-    #     """
-    #     This method makes a given subclass of molecular section (i.e. AtomicSection) and return it as a new instance.
-    #     The reason for this method is to make a specific molecular section just by simply giving its name.
-    #     """
-    #     try:
-    #         molecular_section_instance = eval(str(section))()
-    #
-    #     except (SyntaxError, NameError, TypeError):
-    #         raise AssertionError("Unexpected subclass name for %s!" % self.__class__.__name__)
-    #
-    #     return molecular_section_instance
 
 
 # class BondsSection(MolecularSection):
@@ -120,17 +101,6 @@ class MolecularSection:
 
 
 # if __name__ == '__main__':
-#
-#     atom1 = Atom(atom_id=1, molecule_id=1, atom_type=1, q=0, x=0.3, y=0, z=0, imx=0, imy=0, imz=0, label='')
-#     atom2 = Atom(atom_id=2, molecule_id=1, atom_type=1, q=0, x=0.5, y=0, z=0, imx=0, imy=0, imz=0, label='')
-#     atoms_block = AtomsSection()
-#     atoms_block.add(atom1)
-#     atoms_block.add(atom2)
-#     print (atoms_block)
-#
-#     box1 = Box(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
-#     box_block = BoxSection()
-#     print (box_block)
 
     # bond1 = Bond(bond_id=1, bond_type=1, aid_i=1, aid_j=2)
     # bond2 = Bond(bond_id=2, bond_type=1, aid_i=1, aid_j=2)

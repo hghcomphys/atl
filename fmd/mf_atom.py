@@ -1,15 +1,12 @@
-""" Atom and AtomSection
-"""
+""" Atom and AtomSection"""
 
+from mf_section import MolecularSection
 from mf_error import int_ge_zero
 from copy import deepcopy
-from mf_section import MolecularSection
 
 
 class Atom:
-    """
-    Atom class contains all info about atom and can be used in atom section as one type of molecular sections.
-    """
+    """Atom class contains all info about atom and can be used in atom section as one type of molecular sections."""
 
     def __init__(self, atom_id, molecule_id, atom_type, q, x, y, z, imx=0, imy=0, imz=0, label=''):
         try:
@@ -26,21 +23,21 @@ class Atom:
             self.__label = str(label)  # atom label (string)
 
         except ValueError:
-            raise AssertionError("Unexpected value for %s!" % self.__class__.__name__)
+            raise AssertionError("Unexpected value for initializing %s!" % self.__class__.__name__)
 
     @property
     def x(self):
-        """return x position of atom"""
+        """returns x position of atom"""
         return self.__x
 
     @property
     def y(self):
-        """return y position of atom"""
+        """returns y position of atom"""
         return self.__y
 
     @property
     def z(self):
-        """return z position of atom"""
+        """returns z position of atom"""
         return self.__z
 
     @property
@@ -49,7 +46,7 @@ class Atom:
         return self.__label
 
     def __str__(self):
-        """defines string conversion of Atom instance"""
+        """defines string conversion for Atom"""
         out = ''
         for attribute in [self.__atom_id, self.__molecule_id, self.__atom_type, self.__q, self.__x, self.__y, self.__z,
                           self.__imx, self.__imy, self.__imz, self.__label]:
@@ -59,16 +56,27 @@ class Atom:
 
 class AtomsSection(MolecularSection):
     """
-    This class contains particularly list of Atom class with relevant methods for the atoms.
+    This class contains particularly list of Atom intances with relevant methods for the atoms section.
     """
-    def __init__(self):
-        MolecularSection.__init__(self, 'Masses')
-        self.__atoms = self.items
+    def __init__(self, atoms=None):
+        # TODO: AtomSection inheritades from MolecularSection class!
+        MolecularSection.__init__(self, 'Atoms')
+        # initialize Atom by either atom or list of atoms
+        if isinstance(atoms, Atom):
+            self.add(atoms)
+        if isinstance(atoms, list):
+            self.add_atoms(atoms)
+
+    @property
+    def atoms(self):
+        """returns list of atoms"""
+        return self.items
 
     def add(self, atom):
         if not isinstance(atom, Atom):
             raise AssertionError("Expected Atom type for %s add method!" % self.add.__name__)
-        self.__atoms.append(atom)  # always len(items)=1 (replacing)
+        self.atoms.append(atom)
+        return self
 
     def add_atoms(self, atoms):
         if not isinstance(atoms, list):
@@ -77,11 +85,6 @@ class AtomsSection(MolecularSection):
         for atom in atoms:
             self.add(atom)
         return self
-
-    @property
-    def atoms(self):
-        """returns list of atoms"""
-        return self.__atoms
 
     def get_atoms_number(self):
         """returns number of atoms"""
@@ -99,3 +102,9 @@ class AtomsSection(MolecularSection):
         # returning a new atom section
         return new_atom_section
 
+
+if __name__ == '__main__':
+
+    atom1 = Atom(atom_id=1, molecule_id=1, atom_type=1, q=+0.1, x=0.3, y=0.4, z=0.7, imx=0, imy=0, imz=0, label='Cu')
+    atom2 = Atom(atom_id=2, molecule_id=2, atom_type=2, q=-0.1, x=0.5, y=0.6, z=0.8, imx=1, imy=1, imz=1, label='Fe')
+    print (AtomsSection([atom1, atom2]))

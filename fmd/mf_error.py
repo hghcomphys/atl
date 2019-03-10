@@ -1,6 +1,4 @@
-"""
-Handling errors
-"""
+"""Handling errors"""
 
 
 def int_ge_zero(n):
@@ -23,3 +21,8 @@ def float_ge_zero(x):
         raise ValueError  # Exception("Unexpected negative value for %s!" % float_ge_zero.__name__)
     else:
         return float_x
+
+
+if __name__ == '__main__':
+    # TODO: add tests here!
+    print ("No test!")
