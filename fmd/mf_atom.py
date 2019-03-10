@@ -1,12 +1,15 @@
-"""Atom base class
-
-This class contains all info about atom and can be used in atom section as one type of molecular sections.
+""" Atom and AtomSection
 """
 
 from mf_error import int_ge_zero
+from copy import deepcopy
+from mf_section import MolecularSection
 
 
 class Atom:
+    """
+    Atom class contains all info about atom and can be used in atom section as one type of molecular sections.
+    """
 
     def __init__(self, atom_id, molecule_id, atom_type, q, x, y, z, imx=0, imy=0, imz=0, label=''):
         try:
@@ -52,3 +55,47 @@ class Atom:
                           self.__imx, self.__imy, self.__imz, self.__label]:
             out += str(attribute) + ' '
         return out
+
+
+class AtomsSection(MolecularSection):
+    """
+    This class contains particularly list of Atom class with relevant methods for the atoms.
+    """
+    def __init__(self):
+        MolecularSection.__init__(self, 'Masses')
+        self.__atoms = self.items
+
+    def add(self, atom):
+        if not isinstance(atom, Atom):
+            raise AssertionError("Expected Atom type for %s add method!" % self.add.__name__)
+        self.__atoms.append(atom)  # always len(items)=1 (replacing)
+
+    def add_atoms(self, atoms):
+        if not isinstance(atoms, list):
+            raise AssertionError("Unexpected a list of atoms %s method!" % self.add_atoms.__name__)
+        # adding list of atoms
+        for atom in atoms:
+            self.add(atom)
+        return self
+
+    @property
+    def atoms(self):
+        """returns list of atoms"""
+        return self.__atoms
+
+    def get_atoms_number(self):
+        """returns number of atoms"""
+        return len(self.atoms)
+
+    def __add__(self, other):
+        """ This method defines '+' between atoms section instances."""
+        if not isinstance(other, AtomsSection):
+            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
+        # integrate two atom sections
+        # TODO: simply joining two list of atoms
+        new_atom_section = AtomsSection()
+        new_atom_section.add_atoms(deepcopy(self.atoms))
+        new_atom_section.add_atoms(deepcopy(other.atoms))
+        # returning a new atom section
+        return new_atom_section
+

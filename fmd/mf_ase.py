@@ -2,7 +2,8 @@
 As an adaptor for ASE module
 """
 
-from mf_section import *
+from mf_atom import Atom, AtomsSection
+from mf_box import Box, BoxSection
 
 
 class Adaptor:
@@ -12,7 +13,7 @@ class Adaptor:
         self._molecular_sections = dict()  # dictionary of molecular sections
 
     def _set_molecular_section(self, molecular_section):
-        self._molecular_sections[molecular_section.get_name()] = molecular_section
+        self._molecular_sections[molecular_section.name] = molecular_section
 
     # static method, this is implicitly a class method
     def make(self, package_name):

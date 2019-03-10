@@ -2,7 +2,8 @@
 handling input/output methods in molecular frame
 """
 
-from mf_section import *
+from mf_atom import AtomsSection
+
 
 class Formatter:
 
@@ -27,7 +28,7 @@ class FormatterXYZ(Formatter):
             atoms_section = self._molecular_frame.get_molecular_section('Atoms')
             out_file.write('%d\n\n'%atoms_section.get_atoms_number())
             for atom in atoms_section.get_atoms():
-                out_file.write("%s %f %f %f\n"%(atom._label, atom._x, atom._y, atom._z))
+                out_file.write("%s %f %f %f\n"%(atom.label, atom.x, atom.y, atom.z))
 
     def read(self, file_name, frame=-1):
         """

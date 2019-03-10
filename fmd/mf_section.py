@@ -1,10 +1,9 @@
-"""
-Defining molecular sections meta-class and subsequent classes
-
+"""Defining molecular sections
 """
 
 # from abc import	ABCMeta, abstractmethod
-from mf_base import *
+# from mf_box import Box
+# from mf_atom import Atom
 from copy import deepcopy
 
 
@@ -13,146 +12,62 @@ class MolecularSection:
     Defining base class for each molecular frame section such as AtomSection.
     """
     def __init__(self, name):
-        self._items = []  # empty list of items
-        self._name = str(name)  # setting molecular section name
+        self.__name = str(name)  # setting molecular section name
+        self.__items = []  # empty list of items
+
+    @property
+    def name(self):
+        """This method returns given name of molecular section."""
+        return self.__name
+
+    @property
+    def items(self):
+        """This method returns list of items within molecular section."""
+        return self.__items
 
     def add(self, item):
-        """
-        This method adds an item to molecular section.
-        """
-        self._items.append(item)
+        """This method adds an item to molecular section."""
+        self.__items.append(item)
+        return self
 
     def add_items(self, items):
-        """
-        This methods adds a list of items to molecular section.
-        """
+        """This methods adds a list of items to molecular section."""
         for item in items:
             self.add(items)
-
-    def get_items(self):
-        """
-        This method returns list of items within molecular section.
-        """
-        return self._items
+        return self
 
     def get_items_number(self):
-        """
-        This method returns number of items within the molecular section.
-        """
-        return len(self._items)
-
-    def get_name(self):
-        """This method returns given name of molecular section."""
-        return self._name
+        """This method returns number of items within the molecular section."""
+        return len(self.items)
 
     def __str__(self):
-        """
-        This method defines string conversion of a molecular section instance.
-        """
-        out = self._name + "\n\n"
-        for item in self._items:
+        """This method defines string conversion of a molecular section instance."""
+        out = self.name + "\n\n"
+        for item in self.items:
             out += str(item) + '\n'
         return out
 
     def __eq__(self, other):
-        """
-        This method defines equal '=' operator between two molecular section instances.
-        """
-        if isinstance(other, AtomsSection):
-            self._name = other.get_name()
-            self._items = deepcopy(other.get_items())
-            return self
-        else:
+        """This method defines equal '=' operator between two molecular section instances."""
+        if not isinstance(other, MolecularSection):
             AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
-
-    def make(self, section):
-        """
-        This method makes a given subclass of molecular section (i.e. AtomicSection) and return it as a new instance.
-        The reason for this method is to make a specific molecular section just by simply giving its name.
-        """
-        try:
-            molecular_section_instance = eval(str(section))()
-
-        except (SyntaxError, NameError, TypeError):
-            raise AssertionError("Unexpected subclass name for %s!" % self.__class__.__name__)
-
-        return molecular_section_instance
-
-
-class AtomsSection(MolecularSection):
-    """
-    This class contains particularly list of Atom class with relevant methods for the atoms.
-    """
-    def __init__(self):
-        MolecularSection.__init__(self, "Atoms")
-
-    def add(self, atom):
-        if isinstance(atom, Atom):
-            self._items.append(atom)  # always len(items)=1 (replacing)
-        else:
-            raise AssertionError("Unexpected type for %s!" % self.__class__.__name__)
-
-    def add_atoms(self, atoms):
-        for atom in atoms:
-            self.add(atom)
+        # set name and items
+        self.__name = other.name
+        self.__items = deepcopy(other.items)
         return self
 
-    def get_atoms(self):
-        return self._items
-
-    def get_atoms_number(self):
-        return len(self._items)
-
-    def __add__(self, other):
-        """
-        This method defines '+' between atoms section instances.
-        """
-        if isinstance(other, AtomsSection):
-            new_atom_section = AtomsSection()
-            new_atom_section.add_atoms(deepcopy(self.get_atoms()))
-            new_atom_section.add_atoms(deepcopy(other.get_atoms()))
-            return new_atom_section
-        else:
-            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
-
-
-class BoxSection(MolecularSection):
-    """
-    This class contains simulation box info and relevant methods.
-    """
-    def __init__(self):
-        MolecularSection.__init__(self, 'Box')
-        self._items = None
-
-    def add(self, item):
-        if isinstance(item, Box):
-            self._items = item  # always len(items)=1 (replacing)
-        else:
-            raise AssertionError("Unexpected type for %s!" % self.__class__.__name__)
-
-    def __str__(self):
-        return str(self._items)
-
-    def get_volume(self):
-        """
-        This method calculates volume of the box.
-        """
-        return self._items.get_volume()
-
-    def __add__(self, other):
-        """
-        This method defines '+' between atoms section instances.
-        """
-        if isinstance(other, BoxSection):
-            new_section = BoxSection()
-            if self.get_volume() >= other.get_volume():
-                new_section = self
-            else:
-                new_section = other
-            return new_section
-        else:
-            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
-
+    # def make(self, section):
+    #     """
+    #     This method makes a given subclass of molecular section (i.e. AtomicSection) and return it as a new instance.
+    #     The reason for this method is to make a specific molecular section just by simply giving its name.
+    #     """
+    #     try:
+    #         molecular_section_instance = eval(str(section))()
+    #
+    #     except (SyntaxError, NameError, TypeError):
+    #         raise AssertionError("Unexpected subclass name for %s!" % self.__class__.__name__)
+    #
+    #     return molecular_section_instance
 
 
 # class BondsSection(MolecularSection):
@@ -204,18 +119,18 @@ class BoxSection(MolecularSection):
 # ==========================================================================================
 
 
-if __name__ == '__main__':
-
-    atom1 = Atom(atom_id=1, molecule_id=1, atom_type=1, q=0, x=0.3, y=0, z=0, imx=0, imy=0, imz=0, label='')
-    atom2 = Atom(atom_id=2, molecule_id=1, atom_type=1, q=0, x=0.5, y=0, z=0, imx=0, imy=0, imz=0, label='')
-    atoms_block = AtomsSection()
-    atoms_block.add(atom1)
-    atoms_block.add(atom2)
-    print (atoms_block)
-
-    box1 = Box(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
-    box_block = BoxSection()
-    print (box_block)
+# if __name__ == '__main__':
+#
+#     atom1 = Atom(atom_id=1, molecule_id=1, atom_type=1, q=0, x=0.3, y=0, z=0, imx=0, imy=0, imz=0, label='')
+#     atom2 = Atom(atom_id=2, molecule_id=1, atom_type=1, q=0, x=0.5, y=0, z=0, imx=0, imy=0, imz=0, label='')
+#     atoms_block = AtomsSection()
+#     atoms_block.add(atom1)
+#     atoms_block.add(atom2)
+#     print (atoms_block)
+#
+#     box1 = Box(xlo=1, xhi=2, ylo=-1, yhi=2.3, zlo=92, zhi=23)
+#     box_block = BoxSection()
+#     print (box_block)
 
     # bond1 = Bond(bond_id=1, bond_type=1, aid_i=1, aid_j=2)
     # bond2 = Bond(bond_id=2, bond_type=1, aid_i=1, aid_j=2)
