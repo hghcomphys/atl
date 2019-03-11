@@ -5,5 +5,5 @@
 *.dat
 *.out.*
 *.o
-
+*.backup
 
