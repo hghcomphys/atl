@@ -1,6 +1,6 @@
 """ IO formatter"""
 
-from atom import Atom, AtomsSection
+from .atom import Atom, AtomsSection
 
 
 class Formatter:

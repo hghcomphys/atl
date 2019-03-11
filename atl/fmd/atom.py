@@ -1,7 +1,7 @@
 """ Atom and AtomSection"""
 
-from molsection import MolecularSection
-from error import int_ge_zero
+from .molsection import MolecularSection
+from .error import int_ge_zero
 from copy import deepcopy
 
 

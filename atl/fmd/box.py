@@ -1,6 +1,6 @@
 """Box and BoxSection"""
 
-from molsection import MolecularSection
+from .molsection import MolecularSection
 
 
 class Box:
