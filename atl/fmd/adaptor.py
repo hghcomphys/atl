@@ -1,7 +1,7 @@
 """Adaptor for external package"""
 
-from mf_atom import Atom, AtomsSection
-from mf_box import Box, BoxSection
+from atom import Atom, AtomsSection
+from box import Box, BoxSection
 
 
 class Adaptor:

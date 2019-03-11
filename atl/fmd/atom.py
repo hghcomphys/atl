@@ -1,7 +1,7 @@
 """ Atom and AtomSection"""
 
-from mf_section import MolecularSection
-from mf_error import int_ge_zero
+from molsection import MolecularSection
+from error import int_ge_zero
 from copy import deepcopy
 
 

@@ -7,10 +7,10 @@ to read & write files in desired format (such as .xyz), selecting specific group
 and methods for integrating two molecular frame instances.
 """
 
-from mf_atom import AtomsSection
-from mf_section import MolecularSection
-from mf_ase import Adaptor
-from mf_formatter import Formatter
+from atom import AtomsSection
+from molsection import MolecularSection
+from adaptor import Adaptor
+from formatter import Formatter
 from copy import deepcopy
 
 
@@ -174,7 +174,7 @@ if __name__ == '__main__':
     mf1_sel.write(file_name)
     # print (mf1_sel)
 
-    from mf_box import Box, BoxSection
+    from box import Box, BoxSection
     box1 = Box(xlo=0, xhi=10, ylo=0, yhi=10, zlo=0, zhi=10)
     mf5 = MolecularFrame(molecular_sections=BoxSection(box1))
     # print (mf5)
