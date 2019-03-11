@@ -60,10 +60,10 @@ class AtomsSection(MolecularSection):
         # TODO: AtomSection inheritades from MolecularSection class!
         MolecularSection.__init__(self, 'Atoms')
         # initialize Atom by either atom or list of atoms
-        if isinstance(atoms, Atom):
-            self.add(atoms)
         if isinstance(atoms, list):
             self.add_atoms(atoms)
+        elif atoms is not None:
+            self.add(atoms)
 
     @property
     def atoms(self):
@@ -72,7 +72,6 @@ class AtomsSection(MolecularSection):
 
     def add(self, atom):
         if not isinstance(atom, Atom):
-            print (type(atom), type(Atom), "hi")
             raise AssertionError("Expected Atom type for %s method!" % self.add.__name__)
         self.atoms.append(atom)
         return self
