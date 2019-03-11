@@ -1,6 +1,6 @@
 """Adaptor for external package"""
 
-from .atom import Atom, AtomsSection
+from .atom import Atom
 from .box import Box, BoxSection
 
 

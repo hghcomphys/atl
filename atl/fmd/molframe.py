@@ -7,8 +7,7 @@ to read & write files in desired format (such as .xyz), selecting specific group
 and methods for integrating two molecular frame instances.
 """
 
-from .atom import AtomsSection
-from .molsection import MolecularSection
+from .molsection import MolecularSection, AtomsSection
 from .adaptor import Adaptor
 from .formatter import Formatter
 from copy import deepcopy

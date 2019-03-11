@@ -1,6 +1,7 @@
 """Defining molecular sections"""
 
 from copy import deepcopy
+from .atom import Atom
 
 
 class MolecularSection:
@@ -49,3 +50,53 @@ class MolecularSection:
         self.__name = other.name
         self.__items = deepcopy(other.items)
         return self
+
+
+class AtomsSection(MolecularSection):
+    """
+    This class contains particularly list of Atom intances with relevant methods for the atoms section.
+    """
+    def __init__(self, atoms=None):
+        # TODO: AtomSection inheritades from MolecularSection class!
+        MolecularSection.__init__(self, 'Atoms')
+        # initialize Atom by either atom or list of atoms
+        if isinstance(atoms, Atom):
+            self.add(atoms)
+        if isinstance(atoms, list):
+            self.add_atoms(atoms)
+
+    @property
+    def atoms(self):
+        """returns list of atoms"""
+        return self.items
+
+    def add(self, atom):
+        if not isinstance(atom, Atom):
+            print (type(atom), type(Atom), "hi")
+            raise AssertionError("Expected Atom type for %s method!" % self.add.__name__)
+        self.atoms.append(atom)
+        return self
+
+    def add_atoms(self, atoms):
+        if not isinstance(atoms, list):
+            raise AssertionError("Unexpected a list of atoms %s method!" % self.add_atoms.__name__)
+        # adding list of atoms
+        for atom in atoms:
+            self.add(atom)
+        return self
+
+    def get_atoms_number(self):
+        """returns number of atoms"""
+        return len(self.atoms)
+
+    def __add__(self, other):
+        """ This method defines '+' between atoms section instances."""
+        if not isinstance(other, AtomsSection):
+            AssertionError("Expected %s for '=' operator!" % self.__class__.__name__)
+        # integrate two atom sections
+        # TODO: simply joining two list of atoms
+        new_atom_section = AtomsSection()
+        new_atom_section.add_atoms(deepcopy(self.atoms))
+        new_atom_section.add_atoms(deepcopy(other.atoms))
+        # returning a new atom section
+        return new_atom_section
