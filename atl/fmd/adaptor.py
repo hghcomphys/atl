@@ -2,6 +2,7 @@
 
 from .atom import Atom
 from .box import Box, BoxSection
+from .molsection import AtomsSection
 
 
 class Adaptor:

@@ -21,10 +21,10 @@ class MolecularFrame:
         self.name = name  # assign a given name for molecular frame
         self.__molecular_sections = dict()  # initialize molecular sections as a dictionary
         # initialize molecular sections
-        if isinstance(molecular_sections, MolecularSection):
-            self.set_molecular_section(molecular_sections)
         if isinstance(molecular_sections, dict):
             self.set_molecular_sections(molecular_sections)
+        elif molecular_sections is not None:
+            self.set_molecular_section(molecular_sections)
 
     @property
     def name(self):
@@ -67,8 +67,17 @@ class MolecularFrame:
         for mol_sec in molecular_sections.values():
             self.set_molecular_section(mol_sec)
 
-    def import_from(self, package_instance, package_name):
+    def get_atoms(self):
+        """Returns atoms section"""
+        return self.get_molecular_section("Atoms").atoms
+
+    def get_atoms_number(self):
+        """Returns number of atoms"""
+        return len(self.get_atoms())
+
+    def import_from(self, package_instance, package_name="ASE"):
         """This method imports molecular frame from an external module such as ASE."""
+        # TODO: default package name is set to "ASE"!
         # TODO: error handling for a given input package
         self.set_molecular_sections(Adaptor(package_instance).make(package_name).get_molecular_sections())
         return self
@@ -123,60 +132,6 @@ class MolecularFrame:
         """This method exports molecular frame as an specified external package instance such as ASE."""
         pass
 
-
-# ==========================================================================================
-
-
-if __name__ == '__main__':
-
-    from ase.build import bulk
-    crys1 = bulk('Cu', 'fcc', a=3.6, orthorhombic=True)
-    from ase.build.supercells import make_supercell
-    import numpy as np
-    P = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) * 10
-    crys_supcell1 = make_supercell(crys1, P)
-
-    mf1 = MolecularFrame('supercell')
-    mf1.import_from(crys_supcell1, package_name="ASE")
-    # print (mf1)
-
-    file_name = '/home/hossein/Desktop/test.xyz'
-    mf1.write(file_name)
-
-    mf = MolecularFrame().read(file_name)
-    # print(mf)
-
-    mf2 = MolecularFrame()
-    crys2 = bulk('Pt', 'fcc', a=8.6, orthorhombic=True)
-    P = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) * 5
-    crys_supcell2 = make_supercell(crys2, P)
-    mf2.import_from(crys_supcell2, package_name="ASE")
-    # print(mf2)
-
-    mf3 = mf1 + mf2
-    # print(mf3.name)
-    # print(mf3.get_molecular_section("Atoms").get_atoms_number())
-    mf3.write(file_name)
-    # print (mf3.get_molecular_section("Atoms"))
-
-    # mf4 = MolecularFrame('dasf')
-    # mf4.get_molecular_section(section_name='Box')
-
-    def sphere(x, y, z):
-        """sphere region"""
-        if np.sqrt(x**2+y**2+z**2)<10.0:
-            return True
-        else:
-            return False
-
-    mf1_sel = mf1.select_atoms_region(region_fn=sphere)
-    mf1_sel.write(file_name)
-    # print (mf1_sel)
-
-    from box import Box, BoxSection
-    box1 = Box(xlo=0, xhi=10, ylo=0, yhi=10, zlo=0, zhi=10)
-    mf5 = MolecularFrame(molecular_sections=BoxSection(box1))
-    # print (mf5)
 
 
 

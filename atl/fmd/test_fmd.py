@@ -1,8 +1,16 @@
+"""FMD package tests"""
+
 
 import pytest
 from .atom import Atom
 from .molsection import AtomsSection
+from .molframe import MolecularFrame
 
+import numpy as np
+from ase.build import bulk
+from ase.build.supercells import make_supercell
+
+# ======================================= Atom
 
 # @pytest.fixture
 def atom1():
@@ -30,7 +38,7 @@ def test_atom_exceptions():
     with pytest.raises(AssertionError):
         Atom(atom_id='a', molecule_id=1, atom_type=1, q=+0.1, x=0.3, y=0.4, z=0.7, label='Ge')
 
-# =======================================
+# ======================================= Atoms Section
 
 
 def test_atoms_section():
@@ -88,5 +96,66 @@ def test_atoms_section_exceptions():
     with pytest.raises(AssertionError):
         AtomsSection([1, 2])
 
-# =======================================
+# ======================================= Molecular Frame
 
+def make_supercell_cu():
+    crys = bulk('Cu', 'fcc', a=3.6, orthorhombic=True)
+    P = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) * 5
+    return make_supercell(crys, P)
+
+
+def make_supercell_li():
+    crys = bulk('Li', 'bcc', a=3.51, orthorhombic=True)
+    P = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) * 10
+    return make_supercell(crys, P)
+
+
+def test_molecular_frame():
+    mf = MolecularFrame()
+    assert isinstance(mf, MolecularFrame)
+    assert mf.name == 'Molecular Frame'
+
+
+def test_molecular_frame_import_ase():
+    mf = MolecularFrame('Cu crystal')
+    mf.import_from(package_instance=make_supercell_cu(), package_name="ASE")
+    assert mf.get_atoms_number() == make_supercell_cu().get_number_of_atoms()
+    assert mf.name == 'Cu crystal'
+    assert pytest.approx(mf.get_atoms()[1].x) == make_supercell_cu().get_positions()[1][0]  # second atom x position
+    assert mf.get_atoms()[1].label == 'Cu'  # second atom label
+
+
+def test_molecular_frame_equal():
+    mf = MolecularFrame('Cu crystal').import_from(make_supercell_cu())
+    new_mf = mf  # equal operator
+    assert new_mf.get_atoms_number() == mf.get_atoms_number()
+    assert new_mf.name == mf.name
+    assert new_mf.get_atoms()[1].x == mf.get_atoms()[1].x  # atom x position
+    assert new_mf.get_atoms()[1].label == mf.get_atoms()[1].label # second atom label
+    # TODO: limited to atoms section!
+
+
+def test_molecular_frame_plus():
+    mf1 = MolecularFrame('Cu crystal').import_from(make_supercell_cu())
+    mf2 = MolecularFrame('Li crystal').import_from(make_supercell_li())
+    mf = mf1 + mf2 # plus operator
+    assert isinstance(mf, MolecularFrame)
+    assert mf1.name in mf.name and mf2.name in mf.name
+    assert mf.get_atoms_number() == mf1.get_atoms_number() + mf2.get_atoms_number()
+    # TODO: limited to atoms section!
+
+
+def test_molecular_frame_select_region():
+
+    def sphere(x, y, z):
+        """sphere region"""
+        if np.sqrt(x**2+y**2+z**2)<7.0:
+            return True
+        else:
+            return False
+
+    mf = MolecularFrame('Li crystal').import_from(make_supercell_li())
+    sel_mf = mf.select_atoms_region(region_fn=sphere)
+    assert isinstance(sel_mf, MolecularFrame)
+    assert sel_mf.get_atoms_number() == 12
+    # TODO: limited to atom sections
