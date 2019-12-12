@@ -4,11 +4,13 @@ Atomic tools library (ATL) is the package for molecular simulations with Python 
 Currently, ATL contains some features as follows:
 
 * __Molecular Frame__ tools for working with [LAMMPS][1] data input file (i.e. modifying molecular topologies, merging molecules)
-* Water models (SPC/E, TIP5P) bond&angle info generation from *.xyz* file format
+* Water models (SPC/E, TIP5P) bond and angle info generation from *.xyz* file format
 * Reading [LAMMPS][1] log file into [Pandas](https://pandas.pydata.org/) data frame
 * Inter-molecular Lennard-Jones parameters generator
 * Simple data analysis and visualization (i.e. smoothing data)
 * Total dipole
+* RDF, lateral-RDF
+* Density profile
 
 Example:
 ```python
