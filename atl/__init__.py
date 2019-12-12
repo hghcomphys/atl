@@ -10,5 +10,6 @@ from .intermol_lj_param import *
 from .smooth_data import *
 from .dipole import *
 from .rdf import *
+from .zden import *
 
 # __all__ = ['fmd']
