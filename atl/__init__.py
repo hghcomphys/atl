@@ -11,5 +11,6 @@ from .smooth_data import *
 from .dipole import *
 from .rdf import *
 from .zden import *
+from .hbond import *
 
 # __all__ = ['fmd']
