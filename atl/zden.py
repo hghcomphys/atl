@@ -4,9 +4,8 @@ Python wrapper for calling subroutine from zden_fort.90 using f2py.
 
 def calculate_zden(file_name, sel_type, zlim, nz=100, frames=[1, 1000000, 1]):
     """
-    This subroutine calculates radial distribution function (RDF) between atoms
-    (at this moment atoms with type) from .xyz output format via averaging over
-    specified frames.
+    This subroutine calculates density pfrofile along z-axis 
+    from .xyz output format via averaging over specified frames.
     """
     import os
     # making .so file (ih has to be automated)
