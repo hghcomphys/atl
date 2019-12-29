@@ -1,4 +1,4 @@
-subroutine calc_hbond_fort(file_name, donor_type, donor_typeH, acceptor_type, criteria, pbc_box, z_confined, frames)
+subroutine calc_hbond_fort(file_name, donor_type, donor_typeH, acceptor_type, criteria, pbc_box, z_confined, dump_angle, frames)
 ! This subroutine calculates number of hydrogen bonds from .xyz format via averaging over specified frames.
 implicit none
     
@@ -7,7 +7,7 @@ implicit none
     character(LEN=15), intent(in) :: donor_type, donor_typeH, acceptor_type ! e.g. 'O', 'H', 'O
     real*8, intent(in) :: criteria(3) ! H-bond criteria: rc_oo=3.6; rc_oh=10*2.5; ac_oho=30.
     integer, intent(in) :: frames(3)
-    logical, intent(in) :: z_confined
+    logical, intent(in) :: z_confined, dump_angle
     real*8, intent(in) :: pbc_box(3)
 
     INTEGER, PARAMETER :: MAXSIZE=200000
@@ -25,8 +25,9 @@ implicit none
     integer :: nAtoms
 
     ! opennig files
-    open(1,file=trim(file_name), status='OLD')
-    open(4,file='hb.dat', status='UNKNOWN')
+    open(1, file=trim(file_name), status='OLD')
+    open(4, file='hb.dat', status='UNKNOWN')
+    if (dump_angle) open(2,file='angle.dat', status='UNKNOWN')
 
     ! set HB's criteria
     rc_OO = criteria(1)
@@ -196,6 +197,9 @@ implicit none
                                 if (angle<ac_oho) then                            
                                     nHB_i=nHB_i+1 !counting HB 
                                 endif
+
+                                ! dump angle into the file
+                                if (dump_angle) write(2,'(1F10.5)') angle
             
                             endif
                         enddo                 
@@ -224,6 +228,7 @@ implicit none
         enddo
         close(1)
         close(4)
+        if (dump_angle) close(2)
     
         ! -----------------------------------------------
         ! write(*,*) 'total frame', current_frame
