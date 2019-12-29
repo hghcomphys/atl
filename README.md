@@ -18,6 +18,6 @@ import atl # Atomic Tools Library
 log = atl.read_log_pandas(filename="log.lammps", run=2)
 log.plot(x='Step', y='Temp')
 ```
-For more examples, see `example` folder.
+For more examples are available in the `examples` directory.
 
 [1]:(https://lammps.sandia.gov/)
