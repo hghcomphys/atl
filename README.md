@@ -1,5 +1,5 @@
-# Atomic Tools Library
-Atomic tools library (ATL) is the package for molecular simulations with Python and having core modules implemented in C and Fortran. It is planned to provide user-friendly and advanced tools for carrying out an easier molecular simulation suitable for the [LAMMPS][1] package in terms of preparing input data file and performing post-processing of simulation outputs.
+# Atomic Tool Library
+Atomic tool library (ATL) is the package for molecular simulations with Python and having core modules implemented in C and Fortran. It is planned to provide user-friendly and advanced tools for carrying out an easier molecular simulation suitable for the [LAMMPS][1] package in terms of preparing input data file and performing post-processing of simulation outputs.
 
 Currently, ATL contains some features as follows:
 
@@ -14,7 +14,7 @@ Currently, ATL contains some features as follows:
 
 Example:
 ```python
-import atl # Atomic Tools Library
+import atl # Atomic Tool Library
 log = atl.read_log_pandas(filename="log.lammps", run=2)
 log.plot(x='Step', y='Temp')
 ```
