@@ -12,5 +12,6 @@ from .dipole import *
 from .rdf import *
 from .zden import *
 from .hbond import *
+from .hbond_profile import *
 
 # __all__ = ['fmd']
