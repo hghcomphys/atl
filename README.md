@@ -10,14 +10,9 @@ Currently, ATL contains some features as follows:
 * Total dipole from input structure files
 * Radial distribution function (RDF), lateral-RDF
 * Density profile
-* Average number of H-bonds
+* Average number of H-bonds, H-bond profile
 
-Example:
-```python
-import atl # Atomic Tool Library
-log = atl.read_log_pandas(filename="log.lammps", run=2)
-log.plot(x='Step', y='Temp')
-```
+
 For more examples are available in the `examples` directory.
 
 [1]:(https://lammps.sandia.gov/)
