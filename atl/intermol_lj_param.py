@@ -1,5 +1,5 @@
 """
-Calculating force field parameters
+Calculate Lennard-jones cross-atom parameters
 """
 import math
 

@@ -159,7 +159,7 @@ implicit none
                     call apply_pbc(pbc_box(1), dx)
                     call apply_pbc(pbc_box(2), dy)
                     ! if (.not.z_confined) then
-                    !     call apply_pbc(pbc_box(3), dz)
+                        call apply_pbc(pbc_box(3), dz)
                     ! endif
                     r2 = dx*dx + dy*dy + dz*dz
                     ! -----------------------------------
@@ -181,7 +181,7 @@ implicit none
                                 call apply_pbc(pbc_box(1), dx)
                                 call apply_pbc(pbc_box(2), dy)
                                 ! if (.not.z_confined) then
-                                !     call apply_pbc(pbc_box(3), dz)
+                                    call apply_pbc(pbc_box(3), dz)
                                 ! endif
                                 r2 = dx*dx + dy*dy + dz*dz
                                 ! ----------------------
@@ -212,7 +212,7 @@ implicit none
                             call apply_pbc(pbc_box(1), dx)
                             call apply_pbc(pbc_box(2), dy)
                             ! if (.not.z_confined) then
-                            !     call apply_pbc(pbc_box(3), dz)
+                                call apply_pbc(pbc_box(3), dz)
                             ! endif
                             r2= dx*dx  + dy*dy + dz*dz
                             ! ----------------------------

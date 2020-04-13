@@ -1,5 +1,5 @@
 """
-Manipulating molecular frame
+Molecular Frame
 """
 import copy
 import numpy

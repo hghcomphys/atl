@@ -1,5 +1,5 @@
 """
-Reading data in form of matrix from input file
+Read data in form of matrix from input file
 """
 
 

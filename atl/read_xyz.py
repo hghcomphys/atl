@@ -1,5 +1,5 @@
 """
-Reading lammps data frame into an array or pandas data format
+Read lammps data frame into an array or pandas data format
 """
 
 import pandas

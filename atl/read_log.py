@@ -1,5 +1,5 @@
 """
-Reading lammps log file into an array or pandas data format
+Read lammps log file into an array or pandas data format
 """
 import pandas
 

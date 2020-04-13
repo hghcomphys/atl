@@ -1,5 +1,5 @@
 """
-Smoothing a given input data
+Smooth a given input data
 """
 import numpy as np
 

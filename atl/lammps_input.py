@@ -1,5 +1,5 @@
 """
-Reading/writing lammps input data file and using it in molframe class
+Read/write lammps input data file and using it in molframe class.
 """
 import datetime
 
@@ -20,7 +20,7 @@ def read_lammps_input(filename='lammps.lmp', attributes='Box Masses Atoms Bonds 
     data = {}
     for sec in attributes.split():
 
-        # reading number of types for atoms, bonds, angles, dihedrals, and impropers
+        # read number of types for atoms, bonds, angles, dihedrals, and impropers
         if sec == 'Types':
             types_num = ['atom types', 'bond types', 'angle types', 'dihedral types', 'improper types']
             sectionData = [0, 0, 0, 0, 0]
@@ -38,7 +38,7 @@ def read_lammps_input(filename='lammps.lmp', attributes='Box Masses Atoms Bonds 
                     if n_token==len(types_num) or n_line==100:
                         break
 
-        # reading box sizes, tilted box data is also simply read
+        # read box sizes, tilted box data is also simply read
         elif sec == 'Box':
             sectionData = []
             with open(filename, 'r') as infile:
@@ -58,7 +58,7 @@ def read_lammps_input(filename='lammps.lmp', attributes='Box Masses Atoms Bonds 
                     if len(sectionData) == 4 or n_line==100:
                         break
 
-        # Reading Atoms, Bonds, Agngles, ect
+        # read Atoms, Bonds, Agngles, ect
         else:
 
             f = open(filename, 'r')

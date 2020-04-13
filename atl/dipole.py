@@ -1,10 +1,10 @@
 """
-Calculating the dipole moment of a given data frame.
+Calculate dipole moment of a given data frame
 """
 from . import read_xyz_pandas
 
 
-def total_dipole(filename='water.xyz', type_charge_dict={'O': -0.834, 'H': 0.417}, frame_range=[-1,1,10]):
+def total_dipole(filename='water.xyz', type_charge_dict={'O': -0.834, 'H': 0.417}, frame_range=[-1, 1, 10]):
     """
     This function calculates the total dipole moment for a given range of frame [begin,end,step].
     Input atomic data is in .xyz format and it returns list of evaluated dipole moments.

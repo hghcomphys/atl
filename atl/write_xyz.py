@@ -1,5 +1,5 @@
 """
-writing data into a file
+write xyz data into a file
 """
 
 
