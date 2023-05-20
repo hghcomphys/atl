@@ -1,4 +1,4 @@
-# Atomic Tools Library
+# ATL: Atomic Tools Library
 The atomic tools library (`atl`) is a Python tool aimed at facilitating molecular dynamics simulations, 
 with essential computational kernels implemented in Fortran.
 It is planned to provide an user-friendly tool for carrying out an easier molecular 
